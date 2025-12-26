@@ -24,7 +24,7 @@
 body {
     width: 100vw;
     height: 100vh;
-    overflow-y: hidden;
+    overflow: hidden;
     background: var(--bg-primary);
 
 }
@@ -164,6 +164,9 @@ form .submitBtn {
     }
 }
 @media (max-width:420px) {
+    body{
+        overflow-y: auto;
+    }
     .container{
         width: 85%;
         justify-content: center;
