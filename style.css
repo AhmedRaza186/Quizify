@@ -73,7 +73,7 @@ main {
 }
 
 .container .sideImg {
-    background: url(./assets/sideimg.png);
+    background: url('./assets/sideimg.png');
     background-size: cover;
     background-position: center center;
     border-radius: 25px;
