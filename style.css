@@ -65,7 +65,7 @@ main {
     height: auto;
     margin-bottom: 50px;
     display: flex;
-    min-height: 50%;
+    min-height: 55%;
 }
 
 .container div {
@@ -73,7 +73,7 @@ main {
 }
 
 .container .sideImg {
-    background: url(../assets/sideimg.png);
+    background: url(./assets/sideimg.png);
     background-size: cover;
     background-position: center center;
     border-radius: 25px;
