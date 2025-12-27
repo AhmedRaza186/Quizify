@@ -77,11 +77,11 @@ inputs.forEach(input => {
     input.addEventListener('keydown', e => {
         if (e.key === 'ArrowDown') {
             e.preventDefault()
-         input.nextElementSibling.focus()
+            input.nextElementSibling.focus()
         }
         if (e.key === 'ArrowUp') {
             e.preventDefault()
-           input.previousElementSibling.focus()
+            input.previousElementSibling.focus()
         }
     })
 })
@@ -105,5 +105,19 @@ function getUserData() {
     allUsers.push(userData)
     localStorage.setItem('allUsers', JSON.stringify(allUsers))
 
-    window.location = './login/login.html'
-}
+    let modalScreen = document.querySelector('.modalScreen')
+    let modal = document.querySelector('.modal')
+    modalScreen.style.display = 'flex'
+    setTimeout(() => {
+        modal.style.opacity = '1'
+    }, 100)
+
+    let closeModal = document.querySelector('.cut')
+    closeModal.addEventListener('click', () => {
+        setTimeout(() => {
+            modalScreen.style.display = 'none'
+        }, 300)
+        modal.style.opacity = '0'
+
+    })
+    document.querySelector('.modal button').addEventListener('click',() => window.location='./login/login.html')}

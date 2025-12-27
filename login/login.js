@@ -58,4 +58,5 @@ if(!samePassword){
     throwError('Incorrect Password')
     return
 }
+window.location = './../quiz app/index.html'
 }
