@@ -26,37 +26,44 @@ inputs.forEach(input => {
     input.addEventListener('keydown', e => {
         if (e.key === 'ArrowDown') {
             e.preventDefault()
-         input.nextElementSibling.focus()
+            input.nextElementSibling.focus()
         }
         if (e.key === 'ArrowUp') {
             e.preventDefault()
-           input.previousElementSibling.focus()
+            input.previousElementSibling.focus()
         }
     })
 })
 function loginUser() {
     let allUsers = JSON.parse(localStorage.getItem('allUsers')) || []
 
- let [email,password] = inputs
+    let [email, password] = inputs
 
-    if(!email.value || !password.value){
+    if (!email.value || !password.value) {
         throwError('All fields are required')
-        return 
+        return
     }
     let sameEmail = allUsers.find(user => {
         return user.email == email.value
     })
     let samePassword = allUsers.find(user => {
-    return user.password == password.value
-})
+        return user.password == password.value
+    })
 
-if(!sameEmail){
-    throwError('Email is not registered')
-    return
-}
-if(!samePassword){
-    throwError('Incorrect Password')
-    return
-}
-window.location = './../quiz app/index.html'
+    if (!sameEmail) {
+        throwError('Email is not registered')
+        return
+    }
+    if (!samePassword) {
+        throwError('Incorrect Password')
+        return
+    }
+
+    let logginedUser = {
+        email: email.value,
+        password: password.value,
+    }
+    sessionStorage.setItem('logginedUser', JSON.stringify(logginedUser))
+    console.log(logginedUser)
+    // window.location = './../quiz app/index.html'
 }
