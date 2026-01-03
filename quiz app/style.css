@@ -8,8 +8,8 @@
     --text-primary: #212121;
     --text-secondary: #757575;
     --border-color: #E0E0E0;
-    --shadow: 0 10px 12px 3px rgba(0, 0, 0, 0.2);
-    --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.12);
+    --glass: rgba(255, 255, 255, 0.15);
+    --blur: blur(14px);
 
 }
 
@@ -21,65 +21,231 @@
 
 }
 
-body {
-    background: var(--bg-primary);
-    width: 100vw;
-    height: 100vh;
-    overflow-x: hidden;
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Inter, sans-serif;
 }
 
-header {
-    width: 100%;
-    height: 30%;
-    background: linear-gradient(135deg, var(--primary-light) 30%, var(--primary) 70%);
-    display: flex;
+body {
+    background: var(--bg-primary);
+    color: white;
+    height: 100vh;
+}
 
+
+header {
+    height: 30%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-light));
+    display: flex;
 }
 
 .greetingSide {
     width: 70%;
-    height: 100%;
-    color: var(--bg-primary);
-    font-style: italic;
+    padding-left: 50px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding-left: 50px;
-    gap: 5px;
-    letter-spacing: 2px;
+    gap: 6px;
 }
 
 .dpSide {
     width: 30%;
-    height: 100%;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-.box {
-    width: 50%;
-    height: 100%;
-    background: var(--bg-primary);
+.circle {
+    width: 90px;
+    height: 90px;
+    background: white;
+    color: #4f46e5;
+    border-radius: 50%;
+    font-size: 2.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform .2s;
+}
+
+.circle:hover {
+    transform: scale(1.1);
+}
+
+
+.profileSidebar {
+    position: fixed;
+    top: 0;
+    right: -320px;
+    width: 300px;
+    height: 100vh;
+    background: var(--glass);
+    backdrop-filter: var(--blur);
+    box-shadow: -10px 0 30px rgba(0, 0, 0, .3);
+    padding: 30px 20px;
+    transition: right .4s ease;
+    z-index: 1001;
+}
+
+.profileSidebar.active {
+    right: 0;
+}
+
+.profileTop {
+    margin-top: 35px;
+    text-align: center;
+}
+
+.profileCircle {
+    width: 80px;
+    height: 80px;
+    margin: auto;
+    border-radius: 50%;
+    background: white;
+    color: #4f46e5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.menu {
+    list-style: none;
+    margin-top: 40px;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    gap: 20px;
 }
-.box ul{
-    margin-top: 30vw;
-    list-style: none;
-}
-.circle {
-    width: 100px;
-    background: wheat;
-    padding: 0px 58px;
-    height: 100px;
-    border-radius: 50%;
-    font-size: 2.5rem;
-    display: flex;
-    margin: 0 65px;
-    justify-content: center;
-    align-items: center;
+
+.menu li {
+    padding: 12px;
+    border-radius: 10px;
     cursor: pointer;
+    transition: background .2s, transform .2s;
+}
+
+.menu li:hover {
+    background: rgba(255, 255, 255, .2);
+    transform: translateX(6px);
+}
+
+.logoutBtn {
+    margin-top: auto;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: #ef4444;
+    color: white;
+    cursor: pointer;
+}
+
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .4);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s;
+    z-index: 1000;
+}
+
+.overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.avgScoreSection {
+    padding: 30px 40px;
+}
+
+.avgScoreCard {
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 14px;
+    padding: 24px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-primary);
+}
+
+.avgScoreCard:hover {
+    background: rgba(0, 0, 0, 0.08);
+
+}
+
+.scoreText .label {
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    letter-spacing: 0.5px;
+}
+
+.scoreText h2 {
+    font-size: 2.4rem;
+    font-weight: 500;
+    margin: 6px 0;
+}
+
+.scoreText p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.progressWrapper {
+    width: 45%;
+}
+
+.progressBar {
+    height: 8px;
+    background: rgba(0, 0, 0, 0.185);
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.progressFill {
+    height: 100%;
+    background: #4f46e5;
+    border-radius: 20px;
+    width: 0%;
+    transition: width .7s ease-in-out;
+}
+
+
+
+@media (max-width : 480px) {
+    header {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .greetingSide {
+
+        width: 100%;
+        margin-top: 15px;
+    }
+
+    .greetingSide h1 {
+        font-size: 1.7rem;
+    }
+
+    .dpSide {
+        margin-top: 45px;
+    }
+
+    .avgScoreCard {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 18px;
+    }
+
+    .progressWrapper {
+        width: 100%;
+    }
 }

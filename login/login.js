@@ -65,5 +65,5 @@ function loginUser() {
     }
     sessionStorage.setItem('logginedUser', JSON.stringify(logginedUser))
     console.log(logginedUser)
-    // window.location = './../quiz app/index.html'
+    window.location = './../quiz app/index.html'
 }

@@ -15,13 +15,9 @@ function valueTrim(input) {
     input.value = input.value.trim()
 }
 
-function checkData(userName, firstName, lastName, email, password, confirmPass, allUsers) {
-    if (!userName.value || !firstName.value || !lastName.value || !email.value || !password.value || !confirmPass.value) {
+function checkData( firstName, lastName, email, password, confirmPass, allUsers) {
+    if (!firstName.value || !lastName.value || !email.value || !password.value || !confirmPass.value) {
         throwError('All fields are required')
-        return false
-    }
-    if (/[!@#$%&*]/.test(userName.value)) {
-        throwError('Username should not include any special characters')
         return false
     }
     if (email.value.includes(' ')) {
@@ -42,16 +38,9 @@ function checkData(userName, firstName, lastName, email, password, confirmPass, 
         return false
     }
 
-    let sameUserName = allUsers.find(user => {
-        return user.userName == userName.value
-    })
     let sameEmail = allUsers.find(user => {
         return user.email == email.value
     })
-    if (sameUserName) {
-        throwError('Username is already taken')
-        return false
-    }
     if (sameEmail) {
         throwError('Email is already registered')
         return false
@@ -88,15 +77,14 @@ inputs.forEach(input => {
 function getUserData() {
     let allUsers = JSON.parse(localStorage.getItem('allUsers')) || []
 
-    let [userName, firstName, lastName, email, password, confirmPass] = inputs
+    let [firstName, lastName, email, password, confirmPass] = inputs
 
-    if (!checkData(userName, firstName, lastName, email, password, confirmPass, allUsers)) {
+    if (!checkData(firstName, lastName, email, password, confirmPass, allUsers)) {
         return
     }
 
 
     let userData = {
-        userName: userName.value,
         firstName: firstName.value,
         lastName: lastName.value,
         email: email.value,
