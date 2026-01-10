@@ -1,61 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quizify Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<header>
-    <div class="greetingSide">
-        <h1>Hi, Ahmed Raza 👋</h1>
-        <h3>Let’s Play</h3>
-        <p>Level Up Your Brain</p>
-    </div>
-
-    <div class="dpSide">
-        <div class="circle">AR</div>
-    </div>
-</header>
-
-<div class="profileSidebar">
-    <div class="profileTop">
-        <div class="profileCircle">AR</div>
-        <h2>Ahmed Raza</h2>
-        <p>Level 12 🔥</p>
-    </div>
-
-    <ul class="menu">
-        <li>🏠 Home</li>
-        <li>🏆 Achievements</li>
-        <li>🧠 Quizzes</li>
-        <li>⚙ Settings</li>
-    </ul>
-
-    <button class="logoutBtn">🚪 Log Out</button>
-</div>
-<section class="avgScoreSection">
-    <div class="avgScoreCard">
-        <div class="scoreText">
-            <span class="label">Average Score</span>
-            <h2>72%</h2>
-            <p>Based on last 12 quizzes</p>
+    <header>
+        <div class="greetingSide">
+            <h1 id="greetings">Hi, <span id="name">Ahmed Raza</span> 👋</h1>
+            <h3>Let’s Play</h3>
+            <p>Level Up Your Brain</p>
         </div>
 
-        <div class="progressWrapper">
-            <div class="progressBar">
-                <div class="progressFill"></div>
+        <div class="dpSide">
+            <div class="circle" id="shortName"></div>
+        </div>
+    </header>
+
+    <div class="profileSidebar">
+        <div class="profileTop">
+            <div class="profileCircle" id="shortName"></div>
+            <h2 id="name"></h2>
+            <p></p>
+        </div>
+
+        <ul class="menu">
+            <li>🏠 Home</li>
+            <li>🏆 Achievements</li>
+            <li>🧠 Quizzes</li>
+            <li>⚙ Settings</li>
+        </ul>
+
+        <button class="logoutBtn">🚪 Log Out</button>
+    </div>
+    <section class="avgScoreSection">
+        <div class="avgScoreCard">
+            <div class="scoreText">
+                <span class="label">Average Score</span>
+                <h2>72%</h2>
+                <p>Based on last 12 quizzes</p>
+            </div>
+
+            <div class="progressWrapper">
+                <div class="percentages">
+                    <p>0%</p>
+                    <p>100%</p>
+                </div>
+                <div class="progressBar">
+                    <div class="progressFill"></div>
+                </div>
             </div>
         </div>
+    </section>
+    <section class="quizContainer">
+        <div class="quizCategories">
+        </div>
+            <div class="subCategories">
+
+            </div>
+            <div class="quizCards">
+
+            </div>
+    </section>
+
+
     </div>
-</section>
+    <div class="overlay"></div>
 
-
-</div>
-<div class="overlay"></div>
-
-<script src="app.js"></script>
+    <script src="app.js"></script>
 </body>
+
 </html>

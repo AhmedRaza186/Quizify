@@ -202,6 +202,12 @@ header {
     width: 45%;
 }
 
+.percentages {
+    display: flex;
+    justify-content: space-between;
+    color: var(--text-secondary);
+}
+
 .progressBar {
     height: 8px;
     background: rgba(0, 0, 0, 0.185);
@@ -215,6 +221,94 @@ header {
     border-radius: 20px;
     width: 0%;
     transition: width .7s ease-in-out;
+}
+
+.quizContainer {
+    width: 100%;
+    margin-top: 25px;
+    padding: 0 15px;
+}
+
+.quizCategories {
+    width: 100%;
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    scroll-behavior: smooth;
+    
+}
+
+.quizCategories::-webkit-scrollbar {
+    height: 8px;
+}
+
+.quizCategories::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 4px;
+}
+
+.category {
+        display: inline-flex;
+    flex: 0 0 auto;
+    min-width: 10%;
+    height: 40px;
+    border-radius: 25px;
+    padding: 0 20px;
+    border: none;
+    background: var(--bg-secondary);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    /* white-space: nowrap; */
+    transition: transform 0.2s, background 0.2s;
+}
+
+.category:hover {
+    background: var(--accent);
+    color: #fff;
+    transform: scale(1.05);
+}
+
+.category:focus {
+    outline: none;
+        background: var(--accent);
+    color: #fff;
+    transform: scale(1.05);
+}
+
+.subCategories {
+    width: 100%;
+    margin-top: 18px;
+   display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, max-content));
+    gap: 12px;
+}
+
+.subCategory {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 18px;
+    border-radius: 20px;
+    background: var(--bg-secondary);
+    border: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background .2s, transform .2s;
+}
+
+.subCategory:hover {
+    background: var(--accent);
+    color: #fff;
+    transform: scale(1.05);
 }
 
 

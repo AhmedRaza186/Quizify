@@ -35,35 +35,30 @@ inputs.forEach(input => {
     })
 })
 function loginUser() {
-    let allUsers = JSON.parse(localStorage.getItem('allUsers')) || []
+let allUsers = JSON.parse(localStorage.getItem('allUsers')) || []
 
-    let [email, password] = inputs
+let [emailInput, passwordInput] = inputs
 
-    if (!email.value || !password.value) {
-        throwError('All fields are required')
-        return
-    }
-    let sameEmail = allUsers.find(user => {
-        return user.email == email.value
-    })
-    let samePassword = allUsers.find(user => {
-        return user.password == password.value
-    })
+if (!emailInput.value || !passwordInput.value) {
+    throwError('All fields are required')
+    return
+}
 
-    if (!sameEmail) {
-        throwError('Email is not registered')
-        return
-    }
-    if (!samePassword) {
-        throwError('Incorrect Password')
-        return
-    }
 
-    let logginedUser = {
-        email: email.value,
-        password: password.value,
-    }
-    sessionStorage.setItem('logginedUser', JSON.stringify(logginedUser))
-    console.log(logginedUser)
+let foundUser = allUsers.find(user => user.email == emailInput.value)
+
+if (!foundUser) {
+    throwError('Email is not registered')
+    return
+}
+
+
+if (foundUser.password !== passwordInput.value) {
+    throwError('Incorrect Password')
+    return
+}
+
+
+sessionStorage.setItem('logginedUser', JSON.stringify(foundUser))
     window.location = './../quiz app/index.html'
 }
