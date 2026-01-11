@@ -99,7 +99,7 @@ let quizCards = {
     "Debit & Credit": [
         { title: "Basic Rules", level: "Beginner", questions: 10 },
         { title: "Journal Entries", level: "Intermediate", questions: 12 },
-        { title: "Ledger Posting", level: "Intermediate", questions: 10 }
+        { title: "Trial Balance", level: "Intermediate", questions: 10 }
     ],
     "Assets & Expenses": [
         { title: "Asset Types", level: "Beginner", questions: 8 },
@@ -129,7 +129,7 @@ let quizCards = {
     "Market & Price": [
         { title: "Price Determination", level: "Intermediate", questions: 12 },
         { title: "Price Elasticity", level: "Intermediate", questions: 10 },
-        { title: "Government Intervention", level: "Intermediate", questions: 8 }
+        { title: "Price Theory", level: "Intermediate", questions: 8 }
     ],
     "National Income": [
         { title: "GDP Basics", level: "Intermediate", questions: 10 },
@@ -147,15 +147,15 @@ let quizCards = {
         { title: "Physical Geography", level: "Intermediate", questions: 10 }
     ],
     "General Science": [
-        { title: "Physics Basics", level: "Beginner", questions: 10 },
         { title: "Chemistry Basics", level: "Beginner", questions: 12 },
+        { title: "Physics Basics", level: "Beginner", questions: 10 },
         { title: "Biology Basics", level: "Intermediate", questions: 10 }
     ],
-    "Countries": [
-        { title: "Country Facts", level: "Beginner", questions: 10 },
-        { title: "Flags & Capitals", level: "Beginner", questions: 12 },
-        { title: "Historical Events", level: "Intermediate", questions: 10 }
-    ]
+    "Fun Play": [
+    { title: "Flags & Countries", questions: 10 },
+    { title: "Logos & Brands", questions: 10 },
+    { title: "Symbols & Signs", questions: 8 }
+  ]
 }
 
 export { quizCategories }
