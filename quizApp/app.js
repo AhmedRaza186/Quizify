@@ -62,7 +62,7 @@ else {
         btn.className = 'category'
         btn.innerText = cat.title
 
-        btn.addEventListener('focus', () => {
+        btn.addEventListener('click', () => {
             subCategoriesContainer.innerHTML = ''
 
       
