@@ -60,5 +60,5 @@ if (foundUser.password !== passwordInput.value) {
 
 
 sessionStorage.setItem('logginedUser', JSON.stringify(foundUser))
-    window.location = './../quiz app/index.html'
+    window.location = './../quizApp/index.html'
 }
