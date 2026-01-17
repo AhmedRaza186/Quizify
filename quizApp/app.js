@@ -64,10 +64,7 @@ else {
 
         btn.addEventListener('click', () => {
             subCategoriesContainer.innerHTML = ''
-
-      
-
-            if (!cat.subCategories) {
+   if (!cat.subCategories) {
                 subCategoriesContainer.innerHTML = `<p style="color: gray">Coming soon...</p>`
                 return
             }

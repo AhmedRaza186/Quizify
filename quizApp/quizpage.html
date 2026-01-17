@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz UI</title>
+<style>
+:root {
+    --primary: #2f5cbd;
+    --accent: #64B5F6;
+    --bg: #ffffff;
+    --bg-secondary: #ecebeb;
+    --text-primary: #212121;
+    --text-secondary: #757575;
+    --border: #d0d0d0;
+    --hover: #eaf2ff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--bg), var(--bg-secondary));
+    padding: 20px;
+}
+
+.quiz-card {
+    margin-top: 30px;
+    background: transparent;
+    border-radius: 20px;
+    padding: 30px 25px;
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.top-btn, .bottom-btn {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+.bottom-btn{
+    align-self: flex-end;
+}
+
+button {
+    padding: 12px 25px;
+    border-radius: 12px;
+    border: 2px solid var(--primary);
+    background: var(--primary);
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+button:hover {
+    background: var(--hover);
+    color: var(--text-primary);
+    border-color: var(--primary);
+}
+
+.quiz-title {
+    font-size: 1.8rem;
+    color: var(--primary);
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.quiz-question {
+    font-size: 1.4rem;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.answers {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.answer {
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    background: #fff;
+    color: var(--text-primary);
+}
+
+.answer:hover {
+    background: var(--hover);
+    border-color: var(--primary);
+}
+
+.answer.selected {
+    border-color: var(--primary);
+    background: var(--hover);
+}
+
+.answer input {
+    margin-right: 15px;
+    accent-color: var(--primary);
+}
+
+@media (max-width: 650px) {
+    .quiz-card {
+        padding: 20px 15px;
+        width: 90%;
+    }
+    .quiz-title {
+        font-size: 1.7rem;
+    }
+    .quiz-question {
+        font-size: 1.3rem;
+    }
+    button {
+        padding: 10px 20px;
+        font-size: 0.95rem;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="quiz-card">
+    <div class="top-btn">
+        <button id="backBtn">← Back</button>
+ 
+    </div>
+
+    <!-- Top Back Button -->
+
+    <div class="quiz-title">HTML Basics</div>
+    <div class="quiz-question">Which tag is used to create a hyperlink in HTML?</div>
+    
+    <div class="answers">
+        <label class="answer"><input type="radio" name="q1"> &lt;a&gt;</label>
+        <label class="answer"><input type="radio" name="q1"> &lt;link&gt;</label>
+        <label class="answer"><input type="radio" name="q1"> &lt;href&gt;</label>
+        <label class="answer"><input type="radio" name="q1"> &lt;hyper&gt;</label>
+    </div>
+
+    <!-- Bottom Next Button -->
+    <div class="bottom-btn">
+        <button id="nextBtn">Next →</button>
+    </div>
+
+</div>
+
+<script>
+// Selected state for answers
+const answerLabels = document.querySelectorAll('.answer');
+answerLabels.forEach(label => {
+    label.addEventListener('click', () => {
+        answerLabels.forEach(l => l.classList.remove('selected'));
+        label.classList.add('selected');
+    });
+});
+
+// Back & Next buttons functionality (demo)
+document.getElementById('backBtn').addEventListener('click', () => {
+    alert('Go to previous question');
+});
+document.getElementById('nextBtn').addEventListener('click', () => {
+    alert('Go to next question');
+});
+</script>
+
+</body>
+</html>
