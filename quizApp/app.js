@@ -103,6 +103,7 @@ cards.map(card=>{
                     <button class="startBtn">Start Quiz</button>
                 </div>
             </div>`
+            console.log("IMG PATH FROM DATA:", card.img)
 
 })
     }
