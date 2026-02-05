@@ -1,6 +1,10 @@
+import { getLoggedInUser, signinUser } from "../firebase.js"
+
 let submitBtn = document.querySelector('.submitBtn')
 let errorText = document.querySelector('#errorText')
 let body = document.querySelector('body')
+
+getLoggedInUser()
 
 function throwError(error) {
     errorText.style.display = 'block'
@@ -34,31 +38,29 @@ inputs.forEach(input => {
         }
     })
 })
-function loginUser() {
-let allUsers = JSON.parse(localStorage.getItem('allUsers')) || []
+async function loginUser() {
 
-let [emailInput, passwordInput] = inputs
+    let [emailInput, passwordInput] = inputs
 
-if (!emailInput.value || !passwordInput.value) {
-    throwError('All fields are required')
-    return
-}
+    if (!emailInput.value || !passwordInput.value) {
+        throwError('All fields are required')
+        return
+    }
 
+    try {
+        const user = await signinUser(emailInput.value, passwordInput.value)
 
-let foundUser = allUsers.find(user => user.email == emailInput.value)
+    } catch (error) {
+        if (error.code === 'auth/invalid-credential') {
+            throwError('Invalid email or password')
+            return
+        }
+        if (error.code === 'auth/too-many-requests') {
+            throwError('Too many attempts. Try again later')
+            return
+        }
 
-if (!foundUser) {
-    throwError('Email is not registered')
-    return
-}
+    }
 
-
-if (foundUser.password !== passwordInput.value) {
-    throwError('Incorrect Password')
-    return
-}
-
-
-sessionStorage.setItem('logginedUser', JSON.stringify(foundUser))
     window.location = './../quizApp/index.html'
 }

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="quizpage.css">
+</head>
+<body>
+    <main class="quiz-full-page">
+    <div class="quiz-content-wrapper">
+        <header class="quiz-header">
+            <button class="exit-btn">Quit Quiz</button>
+            
+            <div class="timer-display">
+                <svg class="progress-ring" width="50" height="50">
+                    <circle class="ring-track" cx="25" cy="25" r="22"></circle>
+                    <circle class="ring-fill" id="timer-ring" cx="25" cy="25" r="22"></circle>
+                </svg>
+                <span id="timer-text">15</span>
+            </div>
+
+            <div class="score-pill">
+                Current Question: <span id="q-count">01/10</span>
+            </div>
+        </header>
+
+        <section class="question-area">
+            <div class="progress-container">
+                <div class="progress-bar" style="width: 10%"></div>
+            </div>
+
+            <p class="category-label">HTML Development</p>
+            <h1 class="main-question">Which tag is used to create a hyperlink in HTML?</h1>
+
+            <div class="options-grid">
+                <button class="option-card">
+                    <span class="option-letter">A</span>
+                    <span class="option-text">&lt;a&gt;</span>
+                </button>
+                <button class="option-card">
+                    <span class="option-letter">B</span>
+                    <span class="option-text">&lt;link&gt;</span>
+                </button>
+                <button class="option-card">
+                    <span class="option-letter">C</span>
+                    <span class="option-text">&lt;href&gt;</span>
+                </button>
+                <button class="option-card">
+                    <span class="option-letter">D</span>
+                    <span class="option-text">&lt;hyper&gt;</span>
+                </button>
+            </div>
+        </section>
+
+        <footer class="quiz-footer">
+            <button class="nav-btn prev">Previous</button>
+            <button class="nav-btn next">Save & Next Question →</button>
+        </footer>
+    </div>
+</main>
+<script type="module" src="quizpage.js"></script>
+</body>
+</html>

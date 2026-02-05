@@ -1,7 +1,10 @@
+import { addUserDetails, getLoggedInUser, setSigningUp, signupUsers } from "./firebase.js"
+
 let submitBtn = document.querySelector('.submitBtn')
 let errorText = document.querySelector('#errorText')
 let body = document.querySelector('body')
-
+let uid
+getLoggedInUser()
 function throwError(error) {
     errorText.style.display = 'block'
     errorText.innerText = error
@@ -11,21 +14,10 @@ function throwError(error) {
     }, 1500)
 }
 
-function valueTrim(input) {
-    input.value = input.value.trim()
-}
 
-function checkData( firstName, lastName, email, password, confirmPass, allUsers) {
+function checkData(firstName, lastName, email, password, confirmPass) {
     if (!firstName.value || !lastName.value || !email.value || !password.value || !confirmPass.value) {
         throwError('All fields are required')
-        return false
-    }
-    if (email.value.includes(' ')) {
-        throwError('Email must not contain any spaces')
-        return false
-    }
-    if (!email.value.includes('@') || !email.value.includes('.com')) {
-        throwError('Wrong Email Address')
         return false
     }
     if (password.value.length < 8) {
@@ -38,13 +30,6 @@ function checkData( firstName, lastName, email, password, confirmPass, allUsers)
         return false
     }
 
-    let sameEmail = allUsers.find(user => {
-        return user.email == email.value
-    })
-    if (sameEmail) {
-        throwError('Email is already registered')
-        return false
-    }
     return true
 }
 
@@ -56,13 +41,20 @@ submitBtn.addEventListener('click', event => {
 body.addEventListener('keydown', (e) => {
     if (e.key == 'Enter') {
         submitBtn.click()
+        submitBtn.disabled = true
+        submitBtn.style.opacity = '0.7'
+        setTimeout(() => {
+            submitBtn.style.opacity = '1'
+
+            submitBtn.disabled = false
+
+        }, 1500)
     }
 })
 
 
 let inputs = document.querySelectorAll('input')
 inputs.forEach(input => {
-    valueTrim(input)
     input.addEventListener('keydown', e => {
         if (e.key === 'ArrowDown') {
             e.preventDefault()
@@ -74,38 +66,55 @@ inputs.forEach(input => {
         }
     })
 })
-function getUserData() {
-    let allUsers = JSON.parse(localStorage.getItem('allUsers')) || []
+
+async function getUserData() {
 
     let [firstName, lastName, email, password, confirmPass] = inputs
 
-    if (!checkData(firstName, lastName, email, password, confirmPass, allUsers)) {
+    if (!checkData(firstName, lastName, email, password, confirmPass)) {
         return
     }
 
+    try {
+        setSigningUp(true);
+        const user = await signupUsers(email.value, password.value)
+        uid = user.uid
 
-    let userData = {
-        firstName: firstName.value,
-        lastName: lastName.value,
-        email: email.value,
-        password: password.value,
-    }
-    allUsers.push(userData)
-    localStorage.setItem('allUsers', JSON.stringify(allUsers))
-
-    let modalScreen = document.querySelector('.modalScreen')
-    let modal = document.querySelector('.modal')
-    modalScreen.style.display = 'flex'
-    setTimeout(() => {
-        modal.style.opacity = '1'
-    }, 100)
-
-    let closeModal = document.querySelector('.cut')
-    closeModal.addEventListener('click', () => {
+        let userData = {
+            firstName: firstName.value,
+            lastName: lastName.value,
+            email: email.value,
+            createdAt:new Date()
+        }
+        await addUserDetails(uid,userData)
+    
+        let modalScreen = document.querySelector('.modalScreen')
+        let modal = document.querySelector('.modal')
+        modalScreen.style.display = 'flex'
         setTimeout(() => {
-            modalScreen.style.display = 'none'
-        }, 300)
-        modal.style.opacity = '0'
+            modal.style.opacity = '1'
+        }, 100)
+    
+        let closeModal = document.querySelector('.cut')
+        closeModal.addEventListener('click', () => {
+            setTimeout(() => {
+                modalScreen.style.display = 'none'
+            }, 300)
+            modal.style.opacity = '0'
+    
+        })
+        document.querySelector('.modal button').addEventListener('click', () => window.location = './login/login.html')
+    } catch (error) {
 
-    })
-    document.querySelector('.modal button').addEventListener('click',() => window.location='./login/login.html')}
+        if (error.code === 'auth/email-already-in-use') {
+            throwError('Email already registered')
+            return
+        }
+        if (error.code === 'auth/invalid-email') {
+            throwError('Invalid email address')
+            return
+        }
+
+    }
+
+}
