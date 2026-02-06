@@ -44,11 +44,13 @@ let quizCards = {
     "HTML": [
         {
             title: "HTML Basics", level: "Beginner", questions: 10,
-            img: './quizAssets/frontend/HTML/1.png'
+            img: './quizAssets/frontend/HTML/1.png',
+           
         },
         {
             title: "Forms & Inputs", level: "Beginner", questions: 8,
-            img: './quizAssets/frontend/HTML/2.png'
+            img: './quizAssets/frontend/HTML/2.png',
+              
         },
         {
             title: "Semantic HTML", level: "Intermediate", questions: 12,
@@ -202,11 +204,11 @@ let quizCards = {
     "Debit & Credit": [
         {
             title: "Basic Rules", level: "Beginner", questions: 10,
-            img: './quizAssets/Accounting/Debit-Credit/1.png'
+            img: './quizAssets/Accounting/Debit-Credit/2.png'
         },
         {
             title: "Journal Entries", level: "Intermediate", questions: 12,
-            img: './quizAssets/Accounting/Debit-Credit/2.png'
+            img: './quizAssets/Accounting/Debit-Credit/1.png'
         },
         {
             title: "Trial Balance", level: "Intermediate", questions: 10,
@@ -272,15 +274,15 @@ let quizCards = {
     "Demand & Supply": [
         {
             title: "Law of Demand", level: "Beginner", questions: 10,
-            img: './quizAssets/Economics/Demand-Supply/1.png'
+            img: './quizAssets/Economics/Demand&Supply/1.png'
         },
         {
             title: "Law of Supply", level: "Beginner", questions: 12,
-            img: './quizAssets/Economics/Demand-Supply/2.png'
+            img: './quizAssets/Economics/Demand&Supply/2.png'
         },
         {
             title: "Market Equilibrium", level: "Intermediate", questions: 10,
-            img: './quizAssets/Economics/Demand-Supply/3.png'
+            img: './quizAssets/Economics/Demand&Supply/3.png'
         }
     ],
     "Price": [
@@ -355,15 +357,15 @@ let quizCards = {
     ],
     "Fun Play": [
         {
-            title: "Flags & Countries", questions: 10,
+            title: "Flags & Countries",level: "Beginner", questions: 10,
             img: './quizAssets/GK/Fun/1.png'
         },
         {
-            title: "Logos & Brands", questions: 10,
+            title: "Logos & Brands",level: "Beginner", questions: 10,
             img: './quizAssets/GK/Fun/2.png'
         },
         {
-            title: "Symbols & Signs", questions: 8,
+            title: "Symbols & Signs",level: "Beginner", questions: 8,
             img: './quizAssets/GK/Fun/3.png'
         }
     ]

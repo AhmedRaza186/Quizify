@@ -22,8 +22,8 @@
 body {
     background: var(--bg-dark);
     background-image:
-    radial-gradient(at 0% 0%, rgba(67, 97, 238, 0.15) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(76, 201, 240, 0.1) 0px, transparent 50%);
+        radial-gradient(at 0% 0%, rgba(67, 97, 238, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(76, 201, 240, 0.1) 0px, transparent 50%);
     color: var(--text-primary);
     min-height: 100vh;
     overflow-x: hidden;
@@ -165,8 +165,8 @@ header {
     right: -340px;
     width: 320px;
     height: 100vh;
-    background: rgba(15, 23, 42, 0.95);
-    backdrop-filter: var(--blur);
+    background: rgba(15, 23, 42, 0.5);
+    /* backdrop-filter: var(--blur); */
     padding: 50px 25px;
     transition: right 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
     z-index: 1002;
@@ -176,6 +176,13 @@ header {
 
 .profileSidebar.active {
     right: 0;
+}
+
+
+.profileTop {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .profileCircle {
@@ -212,13 +219,15 @@ header {
     transform: translateX(10px);
     color: var(--accent);
 }
+
 .logoutBtn {
     margin-top: auto;
     width: 100%;
     padding: 14px;
     border: 1.5px solid rgba(239, 68, 68, 0.3);
     border-radius: 14px;
-    background: rgba(239, 68, 68, 0.1); /* Subtle red tint */
+    background: rgba(239, 68, 68, 0.1);
+    /* Subtle red tint */
     color: #ef4444;
     font-weight: 700;
     font-size: 1rem;
@@ -241,13 +250,28 @@ header {
     transform: scale(0.96);
 }
 
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .2);
+    opacity: 0;
+    pointer-events: none;
+    will-change: opacity;
+    z-index: 1000;
+}
+
+.overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+
 /* --- CATEGORIES (Dynamic) --- */
 .quizCategories {
     padding: 20px;
     display: flex;
     gap: 12px;
     overflow-x: auto;
-    scrollbar-width: none;
 }
 
 .category {
@@ -298,16 +322,19 @@ header {
     /* We add a small transition for the hover effect too */
     transition: transform 0.2s, background 0.2s, color 0.2s;
 }
+
+
 /* --- QUIZ CARDS (Dynamic) --- */
 .quizCards {
     padding: 30px 20px;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 25px;
+
 }
 
 .quizCard {
-       background: var(--card-bg);
+    background: var(--card-bg);
     border: 1px solid var(--glass-border);
     border-radius: 24px;
     overflow: hidden;
@@ -386,6 +413,80 @@ header {
     box-shadow: 0 10px 20px rgba(67, 97, 238, 0.3);
 }
 
+/* --- Card Progress Bar --- */
+.card-progress-track {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    margin: 12px 0;
+    overflow: hidden;
+}
+
+.card-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.status-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    z-index: 2;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    text-transform: uppercase;
+}
+
+/* Red color specifically for failed percentage text if you want it extra bright */
+.percentage-text {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+/* --- Completed/Dimmed State --- */
+.quizCard.completed {
+    filter: grayscale(0.5);
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.quizCard.completed .startBtn {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: transparent;
+    color: #888;
+}
+
+.mastered-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #10b981;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    z-index: 2;
+}
+
+.card-image-wrapper {
+    position: relative;
+}
+
 /* --- MODAL --- */
 .profileModalOverlay {
     position: fixed;
@@ -415,6 +516,7 @@ header {
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
+
 .modalBtns {
     display: flex;
     gap: 12px;
@@ -500,6 +602,12 @@ header {
     border: 1px solid var(--glass-border);
     color: white;
     padding: 14px;
+    width: 80%;
+    border-radius: 10px;
+}
+
+#updatefirstName {
+    margin-top: 15px;
 }
 
 .overlay {
@@ -515,20 +623,25 @@ header {
 }
 
 ::-webkit-scrollbar {
-    width: 8px;          /* Width of vertical scrollbar */
-    height: 8px;         /* Height of horizontal scrollbar (for your categories) */
+    width: 8px;
+    /* Width of vertical scrollbar */
+    height: 8px;
+    /* Height of horizontal scrollbar (for your categories) */
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--bg-dark); /* Match your background */
+    background: var(--bg-dark);
+    /* Match your background */
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1); /* Subtle glass look */
+    background: rgba(255, 255, 255, 0.1);
+    /* Subtle glass look */
     border-radius: 20px;
-    border: 2px solid var(--glass-border); /* Creates a 'floating' effect */
+    border: 2px solid var(--glass-border);
+    /* Creates a 'floating' effect */
 }
 
 ::-webkit-scrollbar-thumb:hover {
- background: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.4);
 }

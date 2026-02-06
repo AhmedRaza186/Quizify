@@ -1,7 +1,8 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut  } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc,updateDoc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, updateDoc,getDocs,collection } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+import { quizCards, quizCategories } from "./quizApp/quizData.js";
 
 
 // Your web app's Firebase configuration
@@ -80,7 +81,7 @@ export function getLoggedInUser() {
 
       if (user) {
         resolve(user.uid);
-        
+
         // ONLY redirect if we are NOT in the middle of a signup process
         if (!isSigningUp) {
           if (path === '/login/login.html' || path === '/index.html') {
@@ -97,17 +98,90 @@ export function getLoggedInUser() {
   });
 }
 
-export function logout(){
-      const path = window.location.pathname;
+export function logout() {
+  const path = window.location.pathname;
   signOut(auth).then(() => {
-       if (path.includes('/quizApp/')) {
-          window.location.href = '../login/login.html';
-        }
+    if (path.includes('/quizApp/')) {
+      window.location.href = '../login/login.html';
+    }
     console.log('hogyaaaaaa')
-  // Sign-out successful.
-}).catch((error) => {
+    // Sign-out successful.
+  }).catch((error) => {
     console.log('nhi hogyaaaaaa')
 
-  // An error happened.
-});
+    // An error happened.
+  });
 }
+
+
+// quiz Data
+// --- ONE-TIME DATA MIGRATION FUNCTION ---
+export async function uploadQuizDataToFirestore() {
+
+  try {
+    console.log("🚀 Starting data upload with Progress tracking...");
+
+    // --- STEP A: UPLOAD CATEGORIES ---
+quizCategories.forEach(async (cat, index) => {
+    const catId = cat.title.toLowerCase().replace(/\s+/g, '_');
+    await setDoc(doc(db, "categories", catId), {
+        ...cat,
+        order: index // Adds 0 for first, 1 for second, etc.
+    });
+    console.log(`✅ Category with order: ${catId}`);
+})
+
+    // --- STEP B: UPLOAD QUIZ CARDS (With New Properties) ---
+    const cardEntries = Object.entries(quizCards);
+
+    for (const [subCatName, cards] of cardEntries) {
+
+      // MAP through the cards to add the new tracking properties
+      const updatedCards = cards.map((card,index) => ({
+        ...card,               // Keep all existing properties (title, img, etc.)
+        percentage: 0,         // Default: 0% completion
+        quizCompleted: false, 
+        order: index  // Default: Not finished
+      }));
+
+      const quizDocRef = doc(db, "quizzes", subCatName);
+
+      // Upload the updated array
+      await setDoc(quizDocRef, {
+        data: updatedCards
+      });
+
+      console.log(`✅ Progress-ready cards uploaded for: ${subCatName}`);
+    }
+
+    console.log("🎉 SUCCESS: Data is live with tracking properties!");
+
+  } catch (error) {
+    console.error("❌ Migration failed:", error);
+  }
+}
+export async function fetchCategories() {
+    const querySnapshot = await getDocs(collection(db, "categories"));
+    const categories = [];
+    
+    querySnapshot.forEach((doc) => {
+        categories.push(doc.data());
+    });
+
+    // Sort based on the index we saved
+    return categories.sort((a, b) => a.order - b.order);
+}
+
+export async function getQuizCardsBySub(subName) {
+    const docRef = doc(db, "quizzes", subName);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+        const cards = docSnap.data().data;
+        // Sort by the 'order' property we just added
+        return cards.sort((a, b) => a.order - b.order);
+    } else {
+        return [];
+    }
+}
+// uploadQuizDataToFirestore()

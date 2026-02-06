@@ -1,6 +1,6 @@
 //imports
 import { uploadImg } from "../cloudinary.js"
-import { updateUserDetails, getLoggedInUser, getUserDetails, logout } from "../firebase.js"
+import { updateUserDetails, getLoggedInUser, getUserDetails, logout, fetchCategories, getQuizCardsBySub } from "../firebase.js"
 import { quizCards, quizCategories } from "./quizData.js"
 
 
@@ -45,10 +45,10 @@ showFullName.forEach((name) => {
 
 // profile Pic display
 if (userData.profilePic) {
-        profilePicCircle.forEach((circle) => {
-            circle.style.backgroundImage = `url(${userData.profilePic})`
-           circle.style.backgroundSize = 'cover'
-           circle.style.backgroundPosition = 'center'
+    profilePicCircle.forEach((circle) => {
+        circle.style.backgroundImage = `url(${userData.profilePic})`
+        circle.style.backgroundSize = 'cover'
+        circle.style.backgroundPosition = 'center'
     })
 }
 else {
@@ -102,6 +102,8 @@ updateProfileBtn.addEventListener('click', () => {
 
     updateModalCancelBtn.addEventListener('click', () => {
         updateProfileUI.style.display = 'none'
+        sidebar.classList.add('active')
+    overlay.classList.add('active')
     })
 })
 
@@ -109,9 +111,9 @@ profilePicInput.addEventListener('change', () => {
     const file = profilePicInput.files[0]
 
 
-         profilePreview.src = URL.createObjectURL(file)
-     
-    
+    profilePreview.src = URL.createObjectURL(file)
+
+
 })
 updateModalSaveBtn.addEventListener('click', async () => {
 
@@ -119,30 +121,30 @@ updateModalSaveBtn.addEventListener('click', async () => {
     let updatedlastName = updatelastName.value.trim() || lastName
 
 
-  let imgUrl = userData.profilePic || ''
+    let imgUrl = userData.profilePic || ''
 
-  if (profilePicInput.files[0]) {
-    const formData = new FormData()
-    formData.append('file', profilePicInput.files[0])
-    formData.append('upload_preset', 'quizify')
-    imgUrl = await uploadImg(formData)
-  }
+    if (profilePicInput.files[0]) {
+        const formData = new FormData()
+        formData.append('file', profilePicInput.files[0])
+        formData.append('upload_preset', 'quizify')
+        imgUrl = await uploadImg(formData)
+    }
 
-  const updatedUserData = {
-    firstName: updatedfirstName,
-    lastName: updatedlastName,
-  }
-if (imgUrl) {
-  updatedUserData.profilePic = imgUrl
-}
+    const updatedUserData = {
+        firstName: updatedfirstName,
+        lastName: updatedlastName,
+    }
+    if (imgUrl) {
+        updatedUserData.profilePic = imgUrl
+    }
 
 
-  await updateUserDetails(logginedUser, updatedUserData)
+    await updateUserDetails(logginedUser, updatedUserData)
 
-  updateProfileUI.style.display = 'none'
-  setTimeout(()=>{
-      window.location.reload()
-  },2000)
+    updateProfileUI.style.display = 'none'
+    setTimeout(() => {
+        window.location.reload()
+    }, 2000)
 })
 
 
@@ -151,53 +153,103 @@ let logoutBtn = document.querySelector('.logoutBtn')
 logoutBtn.addEventListener('click', logout)
 
 //categories & sub-categories Display
-quizCategories.forEach((cat) => {
-    let btn = document.createElement('button')
-    btn.className = 'category'
-    btn.innerText = cat.title
 
-    btn.addEventListener('click', () => {
-        subCategoriesContainer.innerHTML = ''
-        cardsContainer.innerHTML = ''
-        if (!cat.subCategories) {
-            subCategoriesContainer.innerHTML = `<p style="color: gray">Coming soon...</p>`
-            return
-        }
+async function loadCategories() {
+    let categories = await fetchCategories()
+    
+    categories.forEach((cat) => {
+        let btn = document.createElement('button');
+        btn.className = 'category';
+        btn.innerText = cat.title;
 
-        cat.subCategories.forEach(sub => {
-            let subBtn = document.createElement('button')
-            subBtn.className = 'subCategory'
-            subBtn.innerText = sub
-            subBtn.addEventListener('click', () => {
-                showCards(sub)
-            })
-            subCategoriesContainer.appendChild(subBtn)
-        })
+        btn.onclick = () => {
+            subCategoriesContainer.innerHTML = '';
+            cardsContainer.innerHTML = '';
 
-    })
+            // If no subcategories, show coming soon
+            if (!cat.subCategories) {
+                subCategoriesContainer.innerHTML = `<p style="color: gray">Coming soon...</p>`;
+                return;
+            }
 
-    categoriesContainer.appendChild(btn)
-})
+            // Create Sub Buttons
+            cat.subCategories.forEach((sub,i) => {
+                let subBtn = document.createElement('button');
+                subBtn.className = 'subCategory';
+                subBtn.innerText = sub;
+                
+                // When sub-button clicked, fetch and show cards
+                subBtn.addEventListener('click',async() => {
+                    let cards = await getQuizCardsBySub(sub); // Get cards from Firebase
+                    showCards(cards); 
+                });
+                subCategoriesContainer.appendChild(subBtn);
+                if (i === 0) subBtn.click();
+            });
+        };
+        categoriesContainer.appendChild(btn);
+    });
+}
 
 //Cards Display
 function showCards(sub) {
     cardsContainer.innerHTML = ''
-    let cards = quizCards[sub]
+    let cards = sub
     console.log(cards)
     cards.map(card => {
-        cardsContainer.innerHTML += `<div class="quizCard">
-            <img src="${card.img}" alt="quiz">
-            <div class="cardBody">
-                <h3>${card.title}</h3>
-                <div class="cardMeta">
-                    <span class="level">${card.level}</span>
-                    <span class="questions">questions:${card.questions}</span>
-                </div>
-                <button class="startBtn">Start Quiz</button>
-            </div>
-        </div>`
+        // 1. Determine the status based on percentage
+        const isFailed = card.quizCompleted && card.percentage < 40;
+        const isMastered = card.quizCompleted && card.percentage >= 40;
 
+        // 2. Dynamic Classes and Colors
+        const statusClass = card.quizCompleted ? 'completed' : '';
+        const accentColor = isFailed ? '#ef4444' : (isMastered ? '#10b981' : 'var(--accent)');
+        const badgeLabel = isFailed ? '✕ Failed' : '✓ Mastered';
+
+        cardsContainer.innerHTML += `
+            <div class="quizCard ${statusClass}" data-sub="${sub}" data-id="${card.order}">
+                <div class="card-image-wrapper">
+                    <img src="${card.img}" alt="${card.title}">
+                    ${card.quizCompleted ? `<span class="status-badge" style="background: ${accentColor}">${badgeLabel}</span>` : ''}
+                </div>
+                
+                <div class="cardBody">
+                    <div class="card-header">
+                        <h3>${card.title}</h3>
+                        <span class="percentage-text" style="color: ${accentColor}">${card.percentage ? card.percentage : 0}%</span>
+                    </div>
+
+                    <div class="card-progress-track">
+                        <div class="card-progress-fill" style="width: ${card.percentage ? card.percentage : 0}%; background: ${accentColor}"></div>
+                    </div>
+
+                    <div class="cardMeta">
+                        <span class="level">${card.level}</span>
+                        <span class="questions">questions:${card.questions}</span>
+                    </div>
+
+                    <button class="startBtn" ${card.quizCompleted ? 'disabled' : ''}>
+                        ${card.quizCompleted ? 'Review Result' : 'Start Quiz'}
+                    </button>
+                </div>
+            </div>`;
     })
 }
+loadCategories()
 
+// start Quiz Functionality
+cardsContainer.addEventListener('click', (e) => {
+    const startBtn = e.target.closest('.startBtn');
+    
+    // If the click wasn't on a start button, or the button is disabled, stop
+    if (!startBtn || startBtn.hasAttribute('disabled')) return;
+
+    // Get the data we need from the parent card
+    const card = startBtn.closest('.quizCard');
+    const subName = card.dataset.sub; // We need to add this attribute in showCards
+    const quizId = card.dataset.id;   // We need to add this attribute in showCards
+
+    // Redirect to your quiz page with parameters
+    window.location.href = `./quizPage/quizpage.html?sub=${subName}&id=${quizId}`;
+});
 
