@@ -1,6 +1,6 @@
 //imports
 import { uploadImg } from "../cloudinary.js"
-import { updateUserDetails, getLoggedInUser, getUserDetails, logout, fetchCategories, getQuizCardsBySub } from "../firebase.js"
+import { updateUserDetails, getLoggedInUser, getUserDetails, logout, fetchCategories, getQuizCardsBySub, getUserProgressBySub } from "../firebase.js"
 import { quizCards, quizCategories } from "./quizData.js"
 
 
@@ -59,30 +59,27 @@ else {
 
 
 
-//Avg Score Progress
-let progress = document.querySelector('.scoreText h2')
-let progressFill = document.querySelector('.progressFill')
+// AVG progress bar 
+function updateUserStats(data) {
+    const progressText = document.querySelector('.scoreText h2');
+    const progressFill = document.querySelector('.progressFill');
+    const quizCountUI = document.querySelector('.basedOnQuizzes');
 
-if (userData.progress) {
-    progress.innerText = userData.progress
-    progressFill.style.width = userData.progress
-}
-else {
-    progress.innerText = '0%'
-    progressFill.style.width = '70%'
+    if (progressText && progressFill) {
+        const userProgress = data.progress || 0;
+        progressText.innerText = `${userProgress}%`;
+        progressFill.style.width = `${userProgress}%`;
+    }
+
+    if (quizCountUI) {
+        // We use data.quizPlayed because 'quizPlayed' as a standalone variable is gone
+        quizCountUI.innerText = data.quizPlayed || 0;
+    }
 }
 
 
-// quizPlayed
-let quizPlayed
-if (userData.quizPlayed) {
-    quizPlayed = userData.quizPlayed
-}
-else {
-    quizPlayed = 0
-}
-let basedOnQuizzesUI = document.querySelector('.basedOnQuizzes')
-basedOnQuizzesUI.innerText = quizPlayed
+updateUserStats(userData); // This one line handles everything above!
+
 
 
 // update Profile functionality
@@ -103,7 +100,7 @@ updateProfileBtn.addEventListener('click', () => {
     updateModalCancelBtn.addEventListener('click', () => {
         updateProfileUI.style.display = 'none'
         sidebar.classList.add('active')
-    overlay.classList.add('active')
+        overlay.classList.add('active')
     })
 })
 
@@ -152,11 +149,13 @@ updateModalSaveBtn.addEventListener('click', async () => {
 let logoutBtn = document.querySelector('.logoutBtn')
 logoutBtn.addEventListener('click', logout)
 
+
+
 //categories & sub-categories Display
 
 async function loadCategories() {
     let categories = await fetchCategories()
-    
+
     categories.forEach((cat) => {
         let btn = document.createElement('button');
         btn.className = 'category';
@@ -173,15 +172,32 @@ async function loadCategories() {
             }
 
             // Create Sub Buttons
-            cat.subCategories.forEach((sub,i) => {
+            cat.subCategories.forEach((sub, i) => {
                 let subBtn = document.createElement('button');
                 subBtn.className = 'subCategory';
                 subBtn.innerText = sub;
-                
+
                 // When sub-button clicked, fetch and show cards
-                subBtn.addEventListener('click',async() => {
-                    let cards = await getQuizCardsBySub(sub); // Get cards from Firebase
-                    showCards(cards); 
+                subBtn.addEventListener('click', async () => {
+                    // 1. Fetch Master Cards
+                    let cards = await getQuizCardsBySub(sub);
+
+                    // 2. Fetch User's Personal Progress
+                    // 'logginedUser' is already defined at the top of your app.js
+                    let userProgress = await getUserProgressBySub(logginedUser, sub);
+
+                    // 3. Merge: Add user-specific status to the master card object
+                    const mergedCards = cards.map(card => {
+                        const progress = userProgress[String(card.order)];
+                        return {
+                            ...card,
+                            // Use user progress if it exists, otherwise default to false/0
+                            quizCompleted: progress ? progress.isCompleted : false,
+                            percentage: progress ? progress.percentage : 0
+                        };
+                    });
+
+                    showCards(mergedCards, sub);
                 });
                 subCategoriesContainer.appendChild(subBtn);
                 if (i === 0) subBtn.click();
@@ -191,10 +207,11 @@ async function loadCategories() {
     });
 }
 
+
 //Cards Display
-function showCards(sub) {
+function showCards(cards, sub) {
     cardsContainer.innerHTML = ''
-    let cards = sub
+
     console.log(cards)
     cards.map(card => {
         // 1. Determine the status based on percentage
@@ -205,7 +222,9 @@ function showCards(sub) {
         const statusClass = card.quizCompleted ? 'completed' : '';
         const accentColor = isFailed ? '#ef4444' : (isMastered ? '#10b981' : 'var(--accent)');
         const badgeLabel = isFailed ? '✕ Failed' : '✓ Mastered';
-
+        console.log(sub)
+        console.log(card)
+        console.log(card.order)
         cardsContainer.innerHTML += `
             <div class="quizCard ${statusClass}" data-sub="${sub}" data-id="${card.order}">
                 <div class="card-image-wrapper">
@@ -240,7 +259,7 @@ loadCategories()
 // start Quiz Functionality
 cardsContainer.addEventListener('click', (e) => {
     const startBtn = e.target.closest('.startBtn');
-    
+
     // If the click wasn't on a start button, or the button is disabled, stop
     if (!startBtn || startBtn.hasAttribute('disabled')) return;
 
@@ -250,6 +269,10 @@ cardsContainer.addEventListener('click', (e) => {
     const quizId = card.dataset.id;   // We need to add this attribute in showCards
 
     // Redirect to your quiz page with parameters
-    window.location.href = `./quizPage/quizpage.html?sub=${subName}&id=${quizId}`;
+    console.log(subName)
+    console.log(quizId)
+    console.log(card)
+    const encodedSub = encodeURIComponent(subName);
+    window.location.href = `./quizPage/quizpage.html?sub=${encodedSub}&id=${quizId}`;
 });
 

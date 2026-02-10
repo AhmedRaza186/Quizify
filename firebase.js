@@ -4,6 +4,8 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, on
 import { getFirestore, doc, setDoc, getDoc, updateDoc,getDocs,collection } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 import { quizCards, quizCategories } from "./quizApp/quizData.js";
 
+import { collectionGroup, query, where} from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -82,7 +84,6 @@ export function getLoggedInUser() {
       if (user) {
         resolve(user.uid);
 
-        // ONLY redirect if we are NOT in the middle of a signup process
         if (!isSigningUp) {
           if (path === '/login/login.html' || path === '/index.html') {
             window.location.href = '../quizApp/index.html';
@@ -115,38 +116,45 @@ export function logout() {
 
 
 // quiz Data
-// --- ONE-TIME DATA MIGRATION FUNCTION ---
-export async function uploadQuizDataToFirestore() {
 
+export async function uploadQuizDataToFirestore() {
   try {
     console.log("🚀 Starting data upload with Progress tracking...");
 
-    // --- STEP A: UPLOAD CATEGORIES ---
-quizCategories.forEach(async (cat, index) => {
-    const catId = cat.title.toLowerCase().replace(/\s+/g, '_');
-    await setDoc(doc(db, "categories", catId), {
-        ...cat,
-        order: index // Adds 0 for first, 1 for second, etc.
-    });
-    console.log(`✅ Category with order: ${catId}`);
-})
 
-    // --- STEP B: UPLOAD QUIZ CARDS (With New Properties) ---
+    const categoryEntries = quizCategories;
+    for (let i = 0; i < categoryEntries.length; i++) {
+        const cat = categoryEntries[i];
+        const catId = cat.title.toLowerCase().replace(/\s+/g, '_');
+        
+        await setDoc(doc(db, "categories", catId), {
+            ...cat,
+            order: i // Preserves your intended list order
+        });
+        console.log(`✅ Category uploaded: ${catId}`);
+    }
+
+
     const cardEntries = Object.entries(quizCards);
 
     for (const [subCatName, cards] of cardEntries) {
+      
+      const updatedCards = cards.map((card, index) => {
+ 
+        const cleanHints = card.hints === Infinity ? -1 : (card.hints || 0);
 
-      // MAP through the cards to add the new tracking properties
-      const updatedCards = cards.map((card,index) => ({
-        ...card,               // Keep all existing properties (title, img, etc.)
-        percentage: 0,         // Default: 0% completion
-        quizCompleted: false, 
-        order: index  // Default: Not finished
-      }));
+        return {
+          ...card,
+          hints: cleanHints,        // Fixed Infinity issue
+          percentage: 0,            // Default progress
+          quizCompleted: false,     // Default state
+          order: index              // Default sorting
+        };
+      });
 
       const quizDocRef = doc(db, "quizzes", subCatName);
 
-      // Upload the updated array
+      // Upload the array wrapped in a data object
       await setDoc(quizDocRef, {
         data: updatedCards
       });
@@ -154,12 +162,13 @@ quizCategories.forEach(async (cat, index) => {
       console.log(`✅ Progress-ready cards uploaded for: ${subCatName}`);
     }
 
-    console.log("🎉 SUCCESS: Data is live with tracking properties!");
+    console.log("🎉 SUCCESS: Data is live with tracking properties and clean numeric hints!");
 
   } catch (error) {
     console.error("❌ Migration failed:", error);
   }
 }
+
 export async function fetchCategories() {
     const querySnapshot = await getDocs(collection(db, "categories"));
     const categories = [];
@@ -185,3 +194,68 @@ export async function getQuizCardsBySub(subName) {
     }
 }
 // uploadQuizDataToFirestore()
+export async function saveUserProgress(subName, quizId, percentage) {
+    const user = auth.currentUser;
+
+    if (!user) {
+        console.error("No user logged in! Progress not saved.");
+        return;
+    }
+
+    // Path: userProgress / [UID] / [SubCategory] / [QuizId]
+    // This keeps the database organized by user
+    const progressRef = doc(db, "userProgress", user.uid, subName, String(quizId));
+
+    try {
+        await setDoc(progressRef, {
+            percentage: percentage,
+            isCompleted: true,
+            completedAt: new Date()
+        }, { merge: true });
+
+        console.log(`Saved progress for ${user.email}`);
+    } catch (error) {
+        console.error("Error saving progress:", error);
+    }
+}
+export async function getUserProgressBySub(userId, subName) {
+    // 1. Critical Check: If the path is incomplete, Firestore will crash.
+    if (!userId || !subName) {
+        console.warn("getUserProgressBySub blocked: Missing userId or subName");
+        return {}; 
+    }
+
+    try {
+        // This targets: userProgress (collection) -> userId (doc) -> subName (sub-collection)
+        const progressRef = collection(db, "userProgress", userId, subName);
+        const querySnapshot = await getDocs(progressRef);
+        
+        let progressData = {};
+        querySnapshot.forEach((doc) => {
+            // doc.id will be your quizId (e.g., "0", "1")
+            progressData[doc.id] = doc.data();
+        });
+
+        console.log(`Fetched progress for ${subName}:`, progressData);
+        return progressData;
+    } catch (error) {
+        // If the sub-collection doesn't exist yet, it might throw an error or return empty
+        console.error("Error in getUserProgressBySub:", error);
+        return {};
+    }
+}
+
+
+export async function calculateAndStoreAvgProgress(uid) {
+    try {
+        // This looks for EVERY document in any collection named 'userProgress' (or its sub-collections)
+        // But we need to filter it by the specific User's path. 
+        // A simpler way: Fetch the user's progress summary.
+        
+        // For now, let's use your existing structure.
+        // We'll fetch all quizzes across all sub-categories.
+        const userProgressRef = collection(db, "userProgress", uid);
+        // Note: Firestore doesn't let you fetch "all subcollections" easily without knowing names.
+        // So, we will update the stats in quizpage.js instead!
+    } catch (e) { console.error(e); }
+}

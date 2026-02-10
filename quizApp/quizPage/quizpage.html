@@ -19,11 +19,15 @@
                     <circle class="ring-track" cx="25" cy="25" r="22"></circle>
                     <circle class="ring-fill" id="timer-ring" cx="25" cy="25" r="22"></circle>
                 </svg>
-                <span id="timer-text">15</span>
+                <span id="timer-text"></span>
             </div>
 
+<button id="hint-btn" class="hint-btn">
+    <span class="hint-icon">💡</span>
+    <span id="hint-count">0</span>
+</button>
             <div class="score-pill">
-                Current Question: <span id="q-count">01/10</span>
+                Current Question: <span id="q-count"></span>
             </div>
         </header>
 
@@ -32,35 +36,24 @@
                 <div class="progress-bar" style="width: 10%"></div>
             </div>
 
-            <p class="category-label">HTML Development</p>
-            <h1 class="main-question">Which tag is used to create a hyperlink in HTML?</h1>
+            <p class="category-label"></p>
+            <h1 class="main-question"></h1>
 
+            <div class="image-container">
+        <img id="q-image" src="" alt="Question Visual" style="display: none;">
+    </div>
             <div class="options-grid">
-                <button class="option-card">
-                    <span class="option-letter">A</span>
-                    <span class="option-text">&lt;a&gt;</span>
-                </button>
-                <button class="option-card">
-                    <span class="option-letter">B</span>
-                    <span class="option-text">&lt;link&gt;</span>
-                </button>
-                <button class="option-card">
-                    <span class="option-letter">C</span>
-                    <span class="option-text">&lt;href&gt;</span>
-                </button>
-                <button class="option-card">
-                    <span class="option-letter">D</span>
-                    <span class="option-text">&lt;hyper&gt;</span>
-                </button>
+
             </div>
         </section>
 
         <footer class="quiz-footer">
-            <button class="nav-btn prev">Previous</button>
             <button class="nav-btn next">Save & Next Question →</button>
+            <!-- <button class="nav-btn prev">Previous</button> -->
         </footer>
     </div>
 </main>
+
 <script type="module" src="quizpage.js"></script>
 </body>
 </html>
