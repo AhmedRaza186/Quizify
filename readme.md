@@ -1,6 +1,6 @@
 # Quizify – Interactive Quiz Dashboard
 
-![Quizify Banner](https://via.placeholder.com/800x200?text=Quizify+Dashboard)  
+![Quizify Banner](./assets/thumbnail.png/800x200?text=Quizify+Dashboard)  
 
 **Quizify** is a modern, interactive quiz platform built with HTML, CSS, and JavaScript. Users can explore categories, track progress, attempt quizzes, and update their profile with a sleek, responsive UI.
 
@@ -49,7 +49,7 @@
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/Quizify.git
+git clone https://github.com/AhmedRaza186/Quizify.git
 
 2.Install dependencies (Firebase & Cloudinary credentials needed):
 
