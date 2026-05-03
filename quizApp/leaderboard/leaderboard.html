@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizify | Leaderboard</title>
+    <link rel="stylesheet" href="leaderboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-brain"></i>
+                    <span>Quizify</span>
+                </div>
+                <button class="sidebar-toggle" id="toggleSidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <nav class="menu">
+                <a href="../index.html"><i class="fas fa-home"></i> <span>Home</span></a>
+                <a href="#" class="active"><i class="fas fa-trophy"></i> <span>Leaderboard</span></a>
+                <a href="../index.html#quizContainer"><i class="fas fa-lightbulb"></i> <span>Quizzes</span></a>
+                <a href="../profile/profile.html"><i class="fas fa-user-circle"></i> <span>Profile</span></a>
+            </nav>
+            <button class="logout-btn"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <div class="header-text">
+                    <h1>Global Leaderboard</h1>
+                    <p>Compete with the best minds across the globe!</p>
+                </div>
+            </header>
+
+            <!-- Top 3 Podium -->
+            <section class="podium-section">
+                <div class="podium">
+                    <div class="podium-item second">
+                        <div class="avatar-container">
+                            <div class="avatar" id="top2-img">🥈</div>
+                            <div class="rank-badge">2</div>
+                        </div>
+                        <h3 id="top2-name">Loading...</h3>
+                        <p id="top2-score">0%</p>
+                    </div>
+                    <div class="podium-item first">
+                        <div class="avatar-container">
+                            <div class="avatar" id="top1-img">👑</div>
+                            <div class="rank-badge">1</div>
+                        </div>
+                        <h3 id="top1-name">Loading...</h3>
+                        <p id="top1-score">0%</p>
+                    </div>
+                    <div class="podium-item third">
+                        <div class="avatar-container">
+                            <div class="avatar" id="top3-img">🥉</div>
+                            <div class="rank-badge">3</div>
+                        </div>
+                        <h3 id="top3-name">Loading...</h3>
+                        <p id="top3-score">0%</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- All Users Section -->
+            <section class="directory-section">
+                <div class="section-header">
+                    <h2>User Directory</h2>
+                    <div class="filters">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="userSearch" placeholder="Search by name or email...">
+                        </div>
+                        <select id="sortFilter">
+                            <option value="rank">Rank (Progress)</option>
+                            <option value="newest">Newest Members</option>
+                            <option value="oldest">Oldest Members</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="user-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>User</th>
+                                <th>Progress</th>
+                                <th>Quizzes</th>
+                                <th>Joined</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userTableBody">
+                            <!-- Rows will be injected here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Bottom Navigation (Mobile) -->
+    <nav class="bottom-nav">
+        <a href="../index.html" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="#" class="nav-item active">
+            <i class="fas fa-trophy"></i>
+            <span>Ranks</span>
+        </a>
+        <a href="../index.html#quizContainer" class="fab-item">
+            <i class="fas fa-play"></i>
+        </a>
+        <a href="../profile/profile.html" class="nav-item">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </a>
+        <a href="#" class="nav-item logout-btn">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Exit</span>
+        </a>
+    </nav>
+
+    <div id="toast-container"></div>
+
+    <script type="module" src="leaderboard.js"></script>
+</body>
+</html>

@@ -1,103 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quizify Dashboard</title>
+    <title>Quizify | Dashboard</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
-
 <body>
-
-    <header>
-        <div class="greetingSide">
-            <h1 id="greetings">Hi, <span id="name"></span> 👋</h1>
-            <h3>Let’s Play</h3>
-            <p>Level Up Your Brain</p>
-           
-        </div>
-
-        <div class="dpSide">
-            <div class="circle pic" id="shortName"></div>
-        </div>
-    </header>
-
-    <div class="profileSidebar">
-        <div class="profileTop">
-            <div class="profileCircle pic" id="shortName"></div>
-            <h2 id="name"></h2>
-            <p></p>
-        </div>
-
-        <ul class="menu">
-            <li>🏠 Home</li>
-            <li>🏆 Achievements</li>
-            <li>🧠 Quizzes</li>
-            <li id="updateProfile">⚙ Update Profile</li>
-        </ul>
-
-        <button class="logoutBtn">🚪 Log Out</button>
-    </div>
-    
-    <section class="avgScoreSection">
-        <div class="avgScoreCard">
-            <div class="scoreText">
-                <span class="label">Average Score</span>
-                <h2></h2>
-                <p>Based on last <span class="basedOnQuizzes"></span> quizzes</p>
-            </div>
-
-            <div class="progressWrapper">
-                <div class="percentages">
-                    <p>0%</p>
-                    <p>100%</p>
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation (Same as Leaderboard) -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-brain"></i>
+                    <span>Quizify</span>
                 </div>
-                <div class="progressBar">
-                    <div class="progressFill"></div>
-                </div>
+                <button class="sidebar-toggle" id="toggleSidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
-        </div>
-    </section>
-    <section class="quizContainer" id="quizContainer">
-        <div class="quizCategories">
-        </div>
-        <div class="subCategories">
+            <nav class="menu">
+                <a href="#" class="active"><i class="fas fa-home"></i> <span>Home</span></a>
+                <a href="./leaderboard/leaderboard.html"><i class="fas fa-trophy"></i> <span>Leaderboard</span></a>
+                <a href="#quizContainer" id="quizzesLink"><i class="fas fa-lightbulb"></i> <span>Quizzes</span></a>
+                <a href="./profile/profile.html"><i class="fas fa-user-circle"></i> <span>Profile</span></a>
+            </nav>
+            <button class="logoutBtn logout-btn">
+                <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+            </button>
+        </aside>
 
-        </div>
-        <div class="quizCards">
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="header">
+                <button class="mobile-menu-trigger" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="greetingSide">
+                    <h3 id="greeting">Welcome back,</h3>
+                    <h1 id="name">User</h1>
+                    <p>Continue your learning journey and climb the ranks!</p>
+                </div>
+                <div class="dpSide">
+                    <div class="circle pic"></div>
+                </div>
+            </header>
 
+            <!-- Stats Overview -->
+            <section class="avgScoreSection">
+                <div class="avgScoreCard">
+                    <div class="scoreText">
+                        <p>Global Progress</p>
+                        <h2 id="overallScore">0%</h2>
+                        <span class="basedOn">Based on <strong class="basedOnQuizzes">0</strong> quizzes</span>
+                    </div>
+                    <div class="progressWrapper">
+                        <div class="percentages">
+                            <span>Your Performance</span>
+                            <span>Avg. Score</span>
+                        </div>
+                        <div class="progressBar">
+                            <div class="progressFill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
- 
-        </div>
-    </section>
+            <!-- Quiz Section -->
+            <section id="quizContainer" class="quiz-explorer">
+                <div class="explorer-header">
+                    <h2>Explore Quizzes</h2>
+                    <div class="quizCategories">
+                        <!-- Categories injected here -->
+                    </div>
+                </div>
+                
+                <div class="subCategories">
+                    <!-- Sub-categories injected here -->
+                </div>
 
-
+                <div class="quizCards">
+                    <!-- Cards injected here -->
+                </div>
+            </section>
+        </main>
     </div>
-    <!-- Update Profile Modal -->
-<div class="profileModalOverlay" id="profileModal">
-  <div class="profileModal">
-    <h2>Update Profile</h2>
 
-    <div class="profilePicBox">
-      <img src="https://cdn-icons-png.flaticon.com/512/10024/10024501.png" id="profilePreview" alt="Upload Your Pic">
-      <label for="profilePic" style="cursor: pointer;">Upload Photo</label>
-      <input type="file" id="profilePic" accept="image/*" hidden>
-    </div>
 
-    <input type="text" id="updatefirstName" placeholder="First Name">
-    <input type="text" id="updatelastName" placeholder="Last Name">
-
-    <div class="modalBtns">
-      <button class="cancelBtn">Cancel</button>
-      <button class="saveBtn">Save</button>
-    </div>
-  </div>
-</div>
+    <!-- Bottom Navigation (Mobile) -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item active">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="./leaderboard/leaderboard.html" class="nav-item">
+            <i class="fas fa-trophy"></i>
+            <span>Ranks</span>
+        </a>
+        <a href="#quizContainer" class="fab-item">
+            <i class="fas fa-play"></i>
+        </a>
+        <a href="./profile/profile.html" class="nav-item">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </a>
+        <a href="#" class="nav-item logout-btn">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Exit</span>
+        </a>
+    </nav>
 
     <div class="overlay"></div>
 
     <script type="module" src="app.js"></script>
 </body>
-
 </html>

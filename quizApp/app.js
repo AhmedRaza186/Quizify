@@ -1,67 +1,143 @@
-//imports
-import { uploadImg } from "../cloudinary.js"
-import { updateUserDetails, getLoggedInUser, getUserDetails, logout, fetchCategories, getQuizCardsBySub, getUserProgressBySub } from "../firebase.js"
-import { quizCards, quizCategories } from "./quizData.js"
+// imports
+import { uploadImg } from "../cloudinary.js";
 
+const API_BASE = 'http://localhost:8000/api';
 
-//decleration
-let body = document.body
-let dp = document.querySelector('.circle')
-let sidebar = document.querySelector('.profileSidebar')
-let overlay = document.querySelector('.overlay')
-let categoriesContainer = document.querySelector('.quizCategories')
-let subCategoriesContainer = document.querySelector('.subCategories')
-let cardsContainer = document.querySelector('.quizCards')
-let profilePicCircle = document.querySelectorAll('.pic')
+// Utility for API calls
+async function apiCall(endpoint, method = 'GET', body = null) {
+    const token = localStorage.getItem('Quizify-token');
+    const headers = {
+        'Content-Type': 'application/json'
+    };
+    if (token) {
+        headers['Authorization'] = token;
+    }
 
+    const config = {
+        method,
+        headers
+    };
+    if (body) {
+        config.body = JSON.stringify(body);
+    }
 
-
-//sidebar functionality
-dp.addEventListener('click', () => {
-    sidebar.classList.add('active')
-    overlay.classList.add('active')
-})
-
-overlay.addEventListener('click', () => {
-    sidebar.classList.remove('active')
-    overlay.classList.remove('active')
-})
-
-
-// getting loggined user details
-let logginedUser = await getLoggedInUser()
-let userData = await getUserDetails(logginedUser)
-
-
-
-//name Display
-let { firstName, lastName } = userData
-let showFullName = document.querySelectorAll('#name')
-showFullName.forEach((name) => {
-    name.innerText = firstName + ' ' + lastName
-
-})
-
-
-// profile Pic display
-if (userData.profilePic) {
-    profilePicCircle.forEach((circle) => {
-        circle.style.backgroundImage = `url(${userData.profilePic})`
-        circle.style.backgroundSize = 'cover'
-        circle.style.backgroundPosition = 'center'
-    })
-}
-else {
-    profilePicCircle.forEach((circle) => {
-        circle.innerText = (firstName[0] + lastName[0]).toUpperCase()
-    })
+    try {
+        const response = await fetch(`${API_BASE}${endpoint}`, config);
+        const data = await response.json();
+        if (!response.ok || !data.status) {
+            if (response.status === 401) {
+                localStorage.removeItem('Quizify-token');
+                window.location.href = '../auth/login.html';
+                return null;
+            }
+            throw new Error(data.message || 'API request failed');
+        }
+        return data.data;
+    } catch (error) {
+        console.error(`API Error (${endpoint}):`, error);
+        return null;
+    }
 }
 
+// declarations
+// sidebar functionality
+const sidebar = document.querySelector('.sidebar');
+const toggleBtn = document.querySelector('#toggleSidebar');
+let dp = document.querySelector('.circle');
+let overlay = document.querySelector('.overlay');
+let categoriesContainer = document.querySelector('.quizCategories');
+let subCategoriesContainer = document.querySelector('.subCategories');
+let cardsContainer = document.querySelector('.quizCards');
+let profilePicCircle = document.querySelectorAll('.pic');
 
+// Initialize sidebar state from localStorage
+const isCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
+if (sidebar && isCollapsed) {
+    sidebar.classList.add('collapsed');
+}
 
-// AVG progress bar 
-function updateUserStats(data) {
-    const progressText = document.querySelector('.scoreText h2');
+if (overlay) {
+    overlay.addEventListener('click', () => {
+        sidebar.classList.remove('mobile-active');
+        overlay.classList.remove('active');
+    });
+}
+
+const mobileMenuBtn = document.querySelector('#mobileMenuBtn');
+if (mobileMenuBtn) {
+    mobileMenuBtn.addEventListener('click', () => {
+        sidebar.classList.add('mobile-active');
+        overlay.classList.add('active');
+    });
+}
+
+if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('collapsed');
+        localStorage.setItem('sidebar-collapsed', sidebar.classList.contains('collapsed'));
+    });
+}
+
+// Hover to expand functionality
+if (sidebar) {
+    sidebar.addEventListener('mouseenter', () => {
+        if (sidebar.classList.contains('collapsed')) {
+            sidebar.classList.remove('collapsed');
+            sidebar.classList.add('hover-expanded');
+        }
+    });
+
+    sidebar.addEventListener('mouseleave', () => {
+        if (sidebar.classList.contains('hover-expanded')) {
+            sidebar.classList.add('collapsed');
+            sidebar.classList.remove('hover-expanded');
+        }
+    });
+}
+
+// User State
+let userData = null;
+
+// Initialization
+async function init() {
+    const token = localStorage.getItem('Quizify-token');
+    if (!token) {
+        window.location.href = '../auth/login.html';
+        return;
+    }
+
+    userData = await apiCall('/users');
+    if (!userData) return;
+
+    updateUI(userData);
+    loadCategories();
+}
+
+function updateUI(data) {
+    // Name Display
+    const { firstName, lastName } = data;
+    const showFullName = document.querySelectorAll('#name');
+    showFullName.forEach((name) => {
+        name.innerText = firstName + ' ' + lastName;
+    });
+
+    // Profile Pic Display
+    if (data.profilePic) {
+        profilePicCircle.forEach((circle) => {
+            circle.style.backgroundImage = `url(${data.profilePic})`;
+            circle.style.backgroundSize = 'cover';
+            circle.style.backgroundPosition = 'center';
+            circle.innerText = '';
+        });
+    } else {
+        profilePicCircle.forEach((circle) => {
+            circle.innerText = (firstName[0] + lastName[0]).toUpperCase();
+            circle.style.backgroundImage = 'none';
+        });
+    }
+
+    // Progress bar 
+    const progressText = document.getElementById('overallScore');
     const progressFill = document.querySelector('.progressFill');
     const quizCountUI = document.querySelector('.basedOnQuizzes');
 
@@ -72,132 +148,87 @@ function updateUserStats(data) {
     }
 
     if (quizCountUI) {
-        // We use data.quizPlayed because 'quizPlayed' as a standalone variable is gone
         quizCountUI.innerText = data.quizPlayed || 0;
     }
 }
 
+// Sidebar / Avatar click navigates to profile
+if (dp) {
+    dp.addEventListener('click', () => {
+        if (window.innerWidth <= 1024) {
+            sidebar.classList.add('mobile-active');
+            overlay.classList.add('active');
+        } else {
+            window.location.href = './profile/profile.html';
+        }
+    });
+}
 
-updateUserStats(userData); // This one line handles everything above!
+// Quizzes Navigation
+let quizzesBtn = document.querySelector('#quizzesLink');
+if (quizzesBtn) {
+    quizzesBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.querySelector('#quizContainer').scrollIntoView({ behavior: 'smooth' });
+    });
+}
 
+// Logout Functionality for both sidebar and bottom nav
+document.querySelectorAll('.logout-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.removeItem('Quizify-token');
+        localStorage.removeItem('Quizify-user');
+        window.location.href = '../auth/login.html';
+    });
+});
 
-
-// update Profile functionality
-let updateProfileBtn = document.querySelector('#updateProfile')
-let updateProfileUI = document.querySelector('.profileModalOverlay')
-let updateModalCancelBtn = document.querySelector('.modalBtns .cancelBtn')
-let updateModalSaveBtn = document.querySelector('.modalBtns .saveBtn')
-const profilePicInput = document.querySelector('#profilePic')
-const profilePreview = document.querySelector('#profilePreview')
-let updatefirstName = document.querySelector('#updatefirstName')
-let updatelastName = document.querySelector('#updatelastName')
-
-updateProfileBtn.addEventListener('click', () => {
-    updateProfileUI.style.display = 'flex'
-    sidebar.classList.remove('active')
-    overlay.classList.remove('active')
-
-    updateModalCancelBtn.addEventListener('click', () => {
-        updateProfileUI.style.display = 'none'
-        sidebar.classList.add('active')
-        overlay.classList.add('active')
-    })
-})
-
-profilePicInput.addEventListener('change', () => {
-    const file = profilePicInput.files[0]
-
-
-    profilePreview.src = URL.createObjectURL(file)
-
-
-})
-updateModalSaveBtn.addEventListener('click', async () => {
-
-    let updatedfirstName = updatefirstName.value.trim() || firstName
-    let updatedlastName = updatelastName.value.trim() || lastName
-
-
-    let imgUrl = userData.profilePic || ''
-
-    if (profilePicInput.files[0]) {
-        const formData = new FormData()
-        formData.append('file', profilePicInput.files[0])
-        formData.append('upload_preset', 'quizify')
-        imgUrl = await uploadImg(formData)
-    }
-
-    const updatedUserData = {
-        firstName: updatedfirstName,
-        lastName: updatedlastName,
-    }
-    if (imgUrl) {
-        updatedUserData.profilePic = imgUrl
-    }
-
-
-    await updateUserDetails(logginedUser, updatedUserData)
-
-    updateProfileUI.style.display = 'none'
-    setTimeout(() => {
-        window.location.reload()
-    }, 2000)
-})
-
-
-//logout Functionality
-let logoutBtn = document.querySelector('.logoutBtn')
-logoutBtn.addEventListener('click', logout)
-
-
-
-//categories & sub-categories Display
-
+// Categories & Sub-categories Display
 async function loadCategories() {
-    let categories = await fetchCategories()
+    let categories = await apiCall('/quiz/categories');
+    if (!categories) return;
 
+    categoriesContainer.innerHTML = '';
     categories.forEach((cat) => {
         let btn = document.createElement('button');
         btn.className = 'category';
         btn.innerText = cat.title;
 
         btn.onclick = () => {
+            document.querySelectorAll('.category').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
             subCategoriesContainer.innerHTML = '';
             cardsContainer.innerHTML = '';
 
-            // If no subcategories, show coming soon
-            if (!cat.subCategories) {
+            if (!cat.subCategories || cat.subCategories.length === 0) {
                 subCategoriesContainer.innerHTML = `<p style="color: gray">Coming soon...</p>`;
                 return;
             }
 
-            // Create Sub Buttons
             cat.subCategories.forEach((sub, i) => {
                 let subBtn = document.createElement('button');
                 subBtn.className = 'subCategory';
                 subBtn.innerText = sub;
 
-                // When sub-button clicked, fetch and show cards
                 subBtn.addEventListener('click', async () => {
-                    // 1. Fetch Master Cards
-                    let cards = await getQuizCardsBySub(sub);
+                    document.querySelectorAll('.subCategory').forEach(b => b.classList.remove('active'));
+                    subBtn.classList.add('active');
 
-                    // 2. Fetch User's Personal Progress
-                    // 'logginedUser' is already defined at the top of your app.js
-                    let userProgress = await getUserProgressBySub(logginedUser, sub);
+                    const cards = await apiCall(`/quiz/cards/${sub}`);
+                    const userProgress = await apiCall(`/quiz/progress?subName=${sub}`);
 
-                    // 3. Merge: Add user-specific status to the master card object
-                    const mergedCards = cards.map(card => {
-                        const progress = userProgress[String(card.order)];
-                        return {
-                            ...card,
-                            // Use user progress if it exists, otherwise default to false/0
-                            quizCompleted: progress ? progress.isCompleted : false,
-                            percentage: progress ? progress.percentage : 0
-                        };
-                    });
-
-                    showCards(mergedCards, sub);
+                    if (cards && userProgress !== null) {
+                        const mergedCards = cards.map(card => {
+                            const progress = userProgress[String(card.order)];
+                            return {
+                                ...card,
+                                quizCompleted: progress ? progress.isCompleted : false,
+                                percentage: progress ? progress.percentage : 0
+                            };
+                        });
+                        showCards(mergedCards, sub);
+                    }
                 });
                 subCategoriesContainer.appendChild(subBtn);
                 if (i === 0) subBtn.click();
@@ -205,74 +236,69 @@ async function loadCategories() {
         };
         categoriesContainer.appendChild(btn);
     });
+    
+    const firstCat = categoriesContainer.querySelector('.category');
+    if (firstCat) firstCat.click();
 }
 
-
-//Cards Display
 function showCards(cards, sub) {
-    cardsContainer.innerHTML = ''
+    cardsContainer.innerHTML = '';
 
-    console.log(cards)
-    cards.map(card => {
-        // 1. Determine the status based on percentage
+    cards.forEach(card => {
         const isFailed = card.quizCompleted && card.percentage < 40;
         const isMastered = card.quizCompleted && card.percentage >= 40;
-
-        // 2. Dynamic Classes and Colors
         const statusClass = card.quizCompleted ? 'completed' : '';
         const accentColor = isFailed ? '#ef4444' : (isMastered ? '#10b981' : 'var(--accent)');
         const badgeLabel = isFailed ? '✕ Failed' : '✓ Mastered';
-        console.log(sub)
-        console.log(card)
-        console.log(card.order)
-        cardsContainer.innerHTML += `
-            <div class="quizCard ${statusClass}" data-sub="${sub}" data-id="${card.order}">
-                <div class="card-image-wrapper">
-                    <img src="${card.img}" alt="${card.title}">
-                    ${card.quizCompleted ? `<span class="status-badge" style="background: ${accentColor}">${badgeLabel}</span>` : ''}
+
+        const cardEl = document.createElement('div');
+        cardEl.className = `quizCard ${statusClass}`;
+        cardEl.dataset.sub = sub;
+        cardEl.dataset.id = card.order;
+        
+        cardEl.innerHTML = `
+            <div class="card-image-wrapper">
+                <img src="${card.img}" alt="${card.title}">
+                ${card.quizCompleted ? `<span class="status-badge" style="background: ${accentColor}">${badgeLabel}</span>` : ''}
+            </div>
+            
+            <div class="cardBody">
+                <div class="card-header">
+                    <h3>${card.title}</h3>
                 </div>
-                
-                <div class="cardBody">
-                    <div class="card-header">
-                        <h3>${card.title}</h3>
-                        <span class="percentage-text" style="color: ${accentColor}">${card.percentage ? card.percentage : 0}%</span>
-                    </div>
 
-                    <div class="card-progress-track">
-                        <div class="card-progress-fill" style="width: ${card.percentage ? card.percentage : 0}%; background: ${accentColor}"></div>
-                    </div>
-
-                    <div class="cardMeta">
-                        <span class="level">${card.level}</span>
-                        <span class="questions">questions:${card.questions}</span>
-                    </div>
-
-                    <button class="startBtn" ${card.quizCompleted ? 'disabled' : ''}>
-                        ${card.quizCompleted ? 'Review Result' : 'Start Quiz'}
-                    </button>
+                <div class="card-progress-track">
+                    <div class="card-progress-fill" style="width: ${card.percentage ? card.percentage : 0}%; background: ${accentColor}"></div>
                 </div>
+
+                <div class="cardMeta">
+                    <span class="level">${card.level}</span>
+                    <span class="questions">questions:${card.questions}</span>
+                </div>
+
+                <button class="startBtn">
+                    ${card.quizCompleted ? 'Review Result' : 'Start Quiz'}
+                </button>
             </div>`;
-    })
+        cardsContainer.appendChild(cardEl);
+    });
 }
-loadCategories()
 
-// start Quiz Functionality
 cardsContainer.addEventListener('click', (e) => {
     const startBtn = e.target.closest('.startBtn');
+    if (!startBtn) return;
 
-    // If the click wasn't on a start button, or the button is disabled, stop
-    if (!startBtn || startBtn.hasAttribute('disabled')) return;
-
-    // Get the data we need from the parent card
     const card = startBtn.closest('.quizCard');
-    const subName = card.dataset.sub; // We need to add this attribute in showCards
-    const quizId = card.dataset.id;   // We need to add this attribute in showCards
+    const subName = card.dataset.sub;
+    const quizId = card.dataset.id;
+    
+    const isReview = startBtn.textContent.trim() === 'Review Result';
 
-    // Redirect to your quiz page with parameters
-    console.log(subName)
-    console.log(quizId)
-    console.log(card)
     const encodedSub = encodeURIComponent(subName);
-    window.location.href = `./quizPage/quizpage.html?sub=${encodedSub}&id=${quizId}`;
+    let url = `./quizPage/quizpage.html?sub=${encodedSub}&id=${quizId}`;
+    if (isReview) url += '&mode=review';
+    
+    window.location.href = url;
 });
 
+init();

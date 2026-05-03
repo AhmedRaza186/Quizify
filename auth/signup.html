@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup | Quizify</title>
+    <link rel="stylesheet" href="auth.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav>
+        <h1 onclick="window.location.href='../index.html'" style="cursor: pointer;">Quiz<span>ify</span></h1>
+    </nav>
+    <main>
+        <div class="container">
+            <div class="sideImg" style=" border-bottom-right-radius: 0;border-top-right-radius: 0;"></div>
+        <div class="form-section">
+            <!-- Signup Form -->
+            <div class="signup-container">
+                <div class="form-header">
+                    <h2>Create Account</h2>
+                    <p>Join thousands of learners on Quizify today.</p>
+                </div>
+                
+                <form class="input-group">
+                    <div style="display: flex; gap: 15px;">
+                        <div class="field-wrapper" style="flex: 1;">
+                            <label>First Name</label>
+                            <input type="text" id="firstName" placeholder="John" required>
+                        </div>
+                        <div class="field-wrapper" style="flex: 1;">
+                            <label>Last Name</label>
+                            <input type="text" id="lastName" placeholder="Doe" required>
+                        </div>
+                    </div>
+
+                    <div class="field-wrapper">
+                        <label>Email Address</label>
+                        <input type="email" id="email" placeholder="name@example.com" required>
+                    </div>
+
+                    <div class="field-wrapper">
+                                 <label for="password">Password</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="password" name="password" required placeholder="••••••••">
+                            <button type="button" id="togglePassword" class="eye-btn">
+                                <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="field-wrapper">
+                        <label>Confirm Password</label>
+                        <input type="password" id="confirmPass" placeholder="••••••••" required>
+                    </div>
+
+                    <button class="submit-btn" id="form-submit">Create Free Account</button>
+                </form>
+
+                <p class="switch-text">
+                    Already have an account? <a href="login.html">Sign In</a>
+                </p>
+            </div>
+
+            <!-- OTP Section -->
+            <div class="otp-section">
+                <div class="form-header">
+                    <h2>Verify Email</h2>
+                    <p>Enter the 6-digit code sent to your email.</p>
+                </div>
+
+                <div class="otp-input-wrapper">
+                    <input type="text" maxlength="1" class="otp-box" inputmode="numeric">
+                    <input type="text" maxlength="1" class="otp-box" inputmode="numeric">
+                    <input type="text" maxlength="1" class="otp-box" inputmode="numeric">
+                    <input type="text" maxlength="1" class="otp-box" inputmode="numeric">
+                    <input type="text" maxlength="1" class="otp-box" inputmode="numeric">
+                    <input type="text" maxlength="1" class="otp-box" inputmode="numeric">
+                </div>
+
+                <button class="submit-btn" id="otp-submit">Verify Account</button>
+
+                <p class="switch-text">
+                    Didn't receive code? <a href="#" id="resendCode">Resend OTP</a>
+                    <span id="otpCountdown" style="display: none;">(<span id="timer">01:00</span>)</span>
+                </p>
+            </div>
+            
+            <p id="errorText"></p>
+        </div>
+        </div>
+
+        <div class="modalScreen">
+            <div class="modal">
+                <div class="cut">❌</div>
+                <div class="modalContent">
+                    <img src="../assets/tick.png" alt="">
+                    <div class="modalText">
+                        <p>You have successfully registered</p>
+                        <p>Now Login</p>
+                    </div>
+                    <button>Login</button>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script type="module" src="auth.js"></script>
+</body>
+</html>

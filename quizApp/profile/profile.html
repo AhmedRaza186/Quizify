@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | Quizify</title>
+    <link rel="stylesheet" href="profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-brain"></i>
+                    <span>Quizify</span>
+                </div>
+                <button class="sidebar-toggle" id="toggleSidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <nav class="menu">
+                <a href="../index.html"><i class="fas fa-home"></i> <span>Home</span></a>
+                <a href="../leaderboard/leaderboard.html"><i class="fas fa-trophy"></i> <span>Leaderboard</span></a>
+                <a href="../index.html#quizContainer"><i class="fas fa-lightbulb"></i> <span>Quizzes</span></a>
+                <a href="#" class="active"><i class="fas fa-user-circle"></i> <span>Profile</span></a>
+            </nav>
+            <button class="logoutBtn logout-btn">
+                <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+            </button>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Profile Header Section -->
+            <section class="profile-header-section">
+                <div class="profile-card hero-card">
+                    <div class="profile-info-main">
+                        <div class="avatar-wrapper">
+                            <img id="profileAvatar" src="../quizAssets/default-avatar.png" alt="Profile Avatar">
+                            <label for="avatarUpload" class="avatar-edit-overlay">
+                                <i class="fas fa-camera"></i>
+                                <span>Change</span>
+                            </label>
+                            <input type="file" id="avatarUpload" accept="image/*" hidden>
+                        </div>
+                        <div class="user-meta">
+                            <h1 id="userFullName">Loading...</h1>
+                            <p id="userTagline">Quiz Enthusiast</p>
+                            <div class="user-badges-inline">
+                                <span class="badge-pill"><i class="fas fa-calendar-alt"></i> Joined <span id="joinDate">May 2026</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stats Overview Grid -->
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-gamepad"></i></div>
+                    <div class="stat-content">
+                        <p>Quizzes Played</p>
+                        <h2 id="totalQuizzes">0</h2>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon score"><i class="fas fa-percentage"></i></div>
+                    <div class="stat-content">
+                        <p>Avg. Score</p>
+                        <h2 id="avgScore">0%</h2>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon best"><i class="fas fa-medal"></i></div>
+                    <div class="stat-content">
+                        <p>Best Score</p>
+                        <h2 id="bestScore">0%</h2>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon rank"><i class="fas fa-crown"></i></div>
+                    <div class="stat-content">
+                        <p>Global Rank</p>
+                        <h2 id="globalRank">#--</h2>
+                    </div>
+                </div>
+            </section>
+
+            <div class="profile-row">
+                <!-- Category Performance -->
+                <section class="performance-section">
+                    <div class="section-card">
+                        <div class="card-header">
+                            <h3>Category Performance</h3>
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <div class="performance-bars" id="performanceBars">
+                            <!-- Injected via JS -->
+                            <p class="empty-msg">Take some quizzes to see your stats!</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Achievements -->
+                <section class="achievements-section">
+                    <div class="section-card">
+                        <div class="card-header">
+                            <h3>Achievements</h3>
+                            <i class="fas fa-award"></i>
+                        </div>
+                        <div class="achievements-grid" id="achievementsGrid">
+                            <div class="achievement-item locked">
+                                <i class="fas fa-first-order"></i>
+                                <span>First Quiz</span>
+                            </div>
+                            <div class="achievement-item locked">
+                                <i class="fas fa-fire"></i>
+                                <span>5 Day Streak</span>
+                            </div>
+                            <div class="achievement-item locked">
+                                <i class="fas fa-star"></i>
+                                <span>Perfect Score</span>
+                            </div>
+                            <div class="achievement-item locked">
+                                <i class="fas fa-graduation-cap"></i>
+                                <span>10 Quizzes</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Quiz History Section -->
+            <section class="history-section">
+                <div class="section-card">
+                    <div class="card-header">
+                        <h3>Quiz History</h3>
+                        <div class="header-actions">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="historySearch" placeholder="Search quiz...">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>Quiz Name</th>
+                                    <th>Score</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTableBody">
+                                <!-- Injected via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Account Settings Section -->
+            <section class="settings-section">
+                <div class="section-card">
+                    <div class="card-header">
+                        <h3>Account Settings</h3>
+                        <i class="fas fa-cog"></i>
+                    </div>
+                    <form class="settings-form" id="settingsForm">
+                        <div class="form-row">
+                            <div class="input-group">
+                                <label>First Name</label>
+                                <input type="text" id="firstName" placeholder="First Name">
+                            </div>
+                            <div class="input-group">
+                                <label>Last Name</label>
+                                <input type="text" id="lastName" placeholder="Last Name">
+                            </div>
+                        </div>
+                        <div class="input-group disabled">
+                            <label>Email Address (Read-only)</label>
+                            <input type="email" id="userEmail" disabled>
+                            <span class="lock-icon"><i class="fas fa-lock"></i></span>
+                        </div>
+                        <div class="form-btns">
+                            <button type="button" class="btn-cancel" id="cancelBtn">Cancel</button>
+                            <button type="submit" class="btn-save">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Bottom Navigation (Mobile) -->
+    <nav class="bottom-nav">
+        <a href="../index.html" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="../leaderboard/leaderboard.html" class="nav-item">
+            <i class="fas fa-trophy"></i>
+            <span>Ranks</span>
+        </a>
+        <a href="../index.html#quizContainer" class="fab-item">
+            <i class="fas fa-play"></i>
+        </a>
+        <a href="#" class="nav-item active">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </a>
+        <a href="#" class="nav-item logout-btn">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Exit</span>
+        </a>
+    </nav>
+
+    <div class="overlay"></div>
+
+    <script type="module" src="profile.js"></script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Quizify</title>
+    <link rel="stylesheet" href="auth.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav>
+        <h1 onclick="window.location.href='../index.html'" style="cursor: pointer;">Quiz<span>ify</span></h1>
+    </nav>
+    <main>
+        <div class="container">
+                        <div class="form-section">
+                <!-- Login Form -->
+                <div class="login-container">
+                    <div class="form-header">
+                        <h2>Welcome Back</h2>
+                        <p>Enter your credentials to access your dashboard.</p>
+                    </div>
+                    
+                    <form class="input-group">
+                        <div class="field-wrapper">
+                            <label>Email Address</label>
+                            <input type="email" id="email" placeholder="name@example.com" required autocomplete="email">
+                        </div>
+    
+                        <div class="field-wrapper">
+                                      <label for="password">Password</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="password" name="password" required placeholder="••••••••">
+                            <button type="button" id="togglePassword" class="eye-btn">
+                                <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
+                        <a href="#" class="forgot-pass disabled">Forgot Password?</a>
+                        </div>
+    
+                        <button class="submit-btn" id="form-submit" type="submit">Sign In</button>
+                    </form>
+    
+                    <p class="switch-text">
+                        Don't have an account? <a href="signup.html">Create one</a>
+                    </p>
+                </div>
+
+                <!-- OTP Section (for unverified users) -->
+                <div class="otp-section">
+                    <div class="form-header">
+                        <h2>Verify Email</h2>
+                        <p>Your account is not verified. Enter the 6-digit code sent to your email.</p>
+                    </div>
+
+                    <div class="otp-input-wrapper">
+                        <input type="text" maxlength="1" class="otp-box" inputmode="numeric">
+                        <input type="text" maxlength="1" class="otp-box" inputmode="numeric">
+                        <input type="text" maxlength="1" class="otp-box" inputmode="numeric">
+                        <input type="text" maxlength="1" class="otp-box" inputmode="numeric">
+                        <input type="text" maxlength="1" class="otp-box" inputmode="numeric">
+                        <input type="text" maxlength="1" class="otp-box" inputmode="numeric">
+                    </div>
+
+                    <button class="submit-btn" id="otp-submit">Verify Account</button>
+
+                    <p class="switch-text">
+                        Didn't receive code? <a href="#" id="resendCode">Resend OTP</a>
+                        <span id="otpCountdown" style="display: none;">(<span id="timer">01:00</span>)</span>
+                    </p>
+                    <p class="switch-text">
+                        <a href="#" id="backToLogin">Back to Login</a>
+                    </p>
+                </div>
+
+                <p id="errorText"></p>
+            </div>
+            <div class="sideImg" style="border-bottom-left-radius: 0;border-top-left-radius: 0;">
+
+            </div>
+        </div>
+        <div class="modalScreen"></div>
+    </main>
+    <script type="module" src="auth.js"></script>
+
+</body>
+</html>

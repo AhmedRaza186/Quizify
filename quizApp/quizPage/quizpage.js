@@ -1,4 +1,40 @@
-import { getLoggedInUser, getQuizCardsBySub, getUserDetails, getUserProgressBySub, saveUserProgress, updateUserDetails } from '../../firebase.js';
+const API_BASE = 'http://localhost:8000/api';
+
+// Utility for API calls
+async function apiCall(endpoint, method = 'GET', body = null) {
+    const token = localStorage.getItem('Quizify-token');
+    const headers = {
+        'Content-Type': 'application/json'
+    };
+    if (token) {
+        headers['Authorization'] = token;
+    }
+
+    const config = {
+        method,
+        headers
+    };
+    if (body) {
+        config.body = JSON.stringify(body);
+    }
+
+    try {
+        const response = await fetch(`${API_BASE}${endpoint}`, config);
+        const data = await response.json();
+        if (!response.ok || !data.status) {
+            if (response.status === 401) {
+                localStorage.removeItem('Quizify-token');
+                window.location.href = '../../auth/login.html';
+                return null;
+            }
+            throw new Error(data.message || 'API request failed');
+        }
+        return data.data;
+    } catch (error) {
+        console.error(`API Error (${endpoint}):`, error);
+        return null;
+    }
+}
 
 // --- DOM Elements ---
 const categoryLabel = document.querySelector('.category-label');
@@ -20,13 +56,18 @@ let score = 0;
 let timerInterval;
 let currentSubName;
 let currentQuizId;
+let currentQuizTitle = ""; // Added
 let hintsLeft = 0;
+let isReviewMode = false;
+let userAnswers = [];
+let previousAnswers = [];
 
 // --- Initialize Quiz ---
 async function initQuiz() {
     const params = new URLSearchParams(window.location.search);
     currentSubName = decodeURIComponent(params.get('sub') || "");
     currentQuizId = params.get('id');
+    isReviewMode = params.get('mode') === 'review';
 
     if (!currentSubName || !currentQuizId) {
         window.location.href = '../index.html';
@@ -34,17 +75,29 @@ async function initQuiz() {
     }
 
     try {
-        const cards = await getQuizCardsBySub(currentSubName);
+        const cards = await apiCall(`/quiz/cards/${currentSubName}`);
+        if (!cards) throw new Error("Could not load quiz cards");
+
         const activeQuiz = cards.find(c => String(c.order) === String(currentQuizId));
 
         if (activeQuiz) {
             quizData = activeQuiz.questionsDetails.questions;
-            categoryLabel.textContent = activeQuiz.title;
+            currentQuizTitle = activeQuiz.title; // Store title
+            categoryLabel.textContent = isReviewMode ? `Review: ${activeQuiz.title}` : activeQuiz.title;
 
-            // Set up hints (Handling -1 as infinite)
-            hintsLeft = activeQuiz.questionsDetails.hints === -1 ? Infinity : (activeQuiz.questionsDetails.hints || 0);
-
-            updateHintUI();
+            if (isReviewMode) {
+                const progress = await apiCall(`/quiz/progress?subName=${currentSubName}`);
+                if (progress && progress[currentQuizId]) {
+                    previousAnswers = progress[currentQuizId].answers || [];
+                }
+                hintBtn.style.display = 'none';
+                timerRing.parentElement.style.display = 'none';
+                timerText.style.display = 'none';
+                quitBtn.innerHTML = '<span class="quit-icon">←</span> Exit Review';
+            } else {
+                hintsLeft = activeQuiz.questionsDetails.hints === -1 ? Infinity : (activeQuiz.questionsDetails.hints || 0);
+                updateHintUI();
+            }
             
             renderQuestion();
         } else {
@@ -61,13 +114,17 @@ async function initQuiz() {
 function renderQuestion() {
     const currentQuestion = quizData[currentIdx];
     
-    nextBtn.disabled = true;
-    nextBtn.textContent = (currentIdx === quizData.length - 1) ? "Finish Quiz" : "Save & Next";
+    if (isReviewMode) {
+        nextBtn.disabled = false;
+        nextBtn.textContent = (currentIdx === quizData.length - 1) ? "Exit Review" : "Next Question →";
+    } else {
+        nextBtn.disabled = true;
+        nextBtn.textContent = (currentIdx === quizData.length - 1) ? "Finish Quiz" : "Save & Next";
+    }
     
     questionText.textContent = currentQuestion.question;
     qCountDisplay.textContent = `${String(currentIdx + 1).padStart(2, '0')}/${quizData.length}`;
 
-    // Handle Question Image
     const qImage = document.getElementById('q-image'); 
     if (qImage) {
         if (currentQuestion.imageURL) {
@@ -78,31 +135,46 @@ function renderQuestion() {
         }
     }
 
-    // Reset Hint Button for the new question
-    if (hintsLeft > 0 || hintsLeft === Infinity) {
+    if (!isReviewMode && (hintsLeft > 0 || hintsLeft === Infinity)) {
         hintBtn.disabled = false;
         hintBtn.style.opacity = "1";
     }
 
-    // Prepare options grid
     optionsGrid.innerHTML = '';
     currentQuestion.options.forEach((option, index) => {
         const button = document.createElement('button');
         button.className = 'option-card';
-        button.style.visibility = 'visible'; // Ensure visible on new question
+        
+        let badgeHtml = '';
+        if (isReviewMode) {
+            const userAnswer = previousAnswers[currentIdx];
+            const isCorrect = index === currentQuestion.correct;
+            const isUserSelected = index === userAnswer;
+
+            if (isCorrect) {
+                button.classList.add('correct-review');
+                badgeHtml = `<span class="review-badge correct-badge">Correct Answer</span>`;
+            } else if (isUserSelected) {
+                button.classList.add('incorrect-review');
+                badgeHtml = `<span class="review-badge incorrect-badge">Your Answer</span>`;
+            }
+            button.style.pointerEvents = 'none';
+        }
+
         button.innerHTML = `
             <span class="option-letter">${String.fromCharCode(65 + index)}</span>
-            <span class="option-text"></span>
+            <span class="option-text">${option}</span>
+            ${badgeHtml}
         `;
-        button.querySelector('.option-text').textContent = option;
-        button.onclick = () => handleSelect(button);
+        if (!isReviewMode) button.onclick = () => handleSelect(button);
         optionsGrid.appendChild(button);
     });
 
-    startTimer(currentQuestion.time || 15);
+    if (!isReviewMode) {
+        startTimer(currentQuestion.time || 15);
+    }
 }
 
-// --- Interaction & Navigation ---
 function handleSelect(selectedElement) {
     document.querySelectorAll('.option-card').forEach(card => card.classList.remove('selected'));
     selectedElement.classList.add('selected');
@@ -111,19 +183,53 @@ function handleSelect(selectedElement) {
 
 nextBtn.addEventListener('click', handleNext);
 
-function handleNext() {
+async function handleNext() {
+    if (isReviewMode) {
+        if (currentIdx < quizData.length - 1) {
+            currentIdx++;
+            updateProgressBar();
+            renderQuestion();
+        } else {
+            window.location.href = '../index.html';
+        }
+        return;
+    }
+
     clearInterval(timerInterval);
     
     const selectedOption = document.querySelector('.option-card.selected');
     const currentQuestion = quizData[currentIdx];
+    let selectedIndex = -1;
+    
+    const allOptions = Array.from(document.querySelectorAll('.option-card'));
     
     if (selectedOption) {
-        const allOptions = Array.from(document.querySelectorAll('.option-card'));
-        const selectedIndex = allOptions.indexOf(selectedOption);
+        selectedIndex = allOptions.indexOf(selectedOption);
+        selectedOption.classList.remove('selected'); // Remove selected to let feedback colors shine
+        
+        // Show feedback immediately
         if (selectedIndex === currentQuestion.correct) {
+            selectedOption.classList.add('correct');
+            selectedOption.innerHTML += `<span class="review-badge correct-badge">Correct!</span>`;
             score++;
+        } else {
+            selectedOption.classList.add('incorrect');
+            selectedOption.innerHTML += `<span class="review-badge incorrect-badge">Your Answer</span>`;
+            
+            allOptions[currentQuestion.correct].classList.add('correct');
+            allOptions[currentQuestion.correct].innerHTML += `<span class="review-badge correct-badge">Correct Answer</span>`;
         }
+    } else {
+        // No selection (timer out) - show correct answer
+        allOptions[currentQuestion.correct].classList.add('correct');
+        allOptions[currentQuestion.correct].innerHTML += `<span class="review-badge correct-badge">Correct Answer</span>`;
     }
+
+    userAnswers.push(selectedIndex);
+    nextBtn.disabled = true;
+
+    // Delay for feedback
+    await new Promise(resolve => setTimeout(resolve, 1500));
 
     if (currentIdx < quizData.length - 1) {
         currentIdx++;
@@ -134,7 +240,6 @@ function handleNext() {
     }
 }
 
-// --- Hint Functionality ---
 function updateHintUI() {
     if (hintCountDisplay) {
         hintCountDisplay.textContent = hintsLeft === Infinity ? "∞" : hintsLeft;
@@ -146,7 +251,7 @@ function updateHintUI() {
 }
 
 hintBtn.addEventListener('click', () => {
-    if (hintsLeft > 0 || hintsLeft === Infinity) {
+    if (!isReviewMode && (hintsLeft > 0 || hintsLeft === Infinity)) {
         useHint();
     }
 });
@@ -154,9 +259,7 @@ hintBtn.addEventListener('click', () => {
 function useHint() {
     const currentQuestion = quizData[currentIdx];
     const options = Array.from(document.querySelectorAll('.option-card'));
-    let removed = 0;
 
-    // Filter to find wrong options, shuffle them, and hide two
     const wrongOptions = options.filter((_, index) => index !== currentQuestion.correct);
     const shuffledWrong = wrongOptions.sort(() => Math.random() - 0.5);
 
@@ -171,10 +274,9 @@ function useHint() {
     }
     
     updateHintUI();
-    hintBtn.disabled = true; // Use only one hint per question
+    hintBtn.disabled = true;
 }
 
-// --- Utilities (Timer & Progress) ---
 function startTimer(seconds) {
     clearInterval(timerInterval);
     let timeLeft = seconds;
@@ -201,34 +303,33 @@ function updateProgressBar() {
 }
 
 quitBtn.addEventListener('click', () => {
-    if (confirm("Quit now? Your progress will be lost!")) {
-        clearInterval(timerInterval);
-        window.location.href = '../index.html'; 
+
+    if (!isReviewMode) {
+        const msg = "Quit now? Your progress will be lost!";
+        if (confirm(msg)) {
+            clearInterval(timerInterval);
+            window.location.href = '../index.html'; 
+        }
+        
     }
+    window.location.href = '../index.html'; 
+    return
 });
 
-// --- Results & Saving ---
 async function finishQuiz() {
-    nextBtn.disabled =true
+    nextBtn.disabled = true;
     clearInterval(timerInterval);
     const wrapper = document.querySelector('.quiz-content-wrapper');
     const percentage = Math.round((score / quizData.length) * 100);
 
-    // Save individual progress
-    await saveUserProgress(currentSubName, currentQuizId, percentage);
-
-    // Update global user stats
-    const logginedUserUid = await getLoggedInUser();
-    const userData = await getUserDetails(logginedUserUid);
-
-    const newQuizPlayed = (userData.quizPlayed || 0) + 1;
-    const oldAvg = userData.progress || 0;
-    const oldCount = userData.quizPlayed || 0;
-    const newAvg = Math.round(((oldAvg * oldCount) + percentage) / newQuizPlayed);
-
-    await updateUserDetails(logginedUserUid, {
-        progress: newAvg,
-        quizPlayed: newQuizPlayed
+    // Save individual progress (Backend handles aggregate stats)
+    await apiCall('/quiz/progress', 'POST', {
+        subCategory: currentSubName,
+        quizId: currentQuizId,
+        percentage: percentage,
+        answers: userAnswers,
+        quizName: currentQuizTitle, // Added
+        category: currentSubName     // Added
     });
 
     const isPassed = percentage >= 40;
@@ -244,9 +345,10 @@ async function finishQuiz() {
             <p class="score-details">
                 You correctly answered <strong>${score}</strong> out of <strong>${quizData.length}</strong> questions.
             </p>
-            <button class="nav-btn" onclick="window.location.href='../index.html'">
-                Return to Dashboard
-            </button>
+            <div class="result-btns">
+                <button class="nav-btn" onclick="window.location.href='../index.html'">Dashboard</button>
+                <button class="nav-btn review-btn" onclick="window.location.href='?sub=${encodeURIComponent(currentSubName)}&id=${currentQuizId}&mode=review'">Review Result</button>
+            </div>
         </div>
     `;
 }
