@@ -63,13 +63,6 @@ if (overlay) {
     });
 }
 
-const mobileMenuBtn = document.querySelector('#mobileMenuBtn');
-if (mobileMenuBtn) {
-    mobileMenuBtn.addEventListener('click', () => {
-        sidebar.classList.add('mobile-active');
-        overlay.classList.add('active');
-    });
-}
 
 if (toggleBtn) {
     toggleBtn.addEventListener('click', () => {
