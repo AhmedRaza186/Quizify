@@ -1,7 +1,7 @@
 // imports
 import { uploadImg } from "../cloudinary.js";
 
-const API_BASE = 'http://localhost:8000/api';
+const API_BASE = 'https://quizify-backend-nine.vercel.app/api';
 
 // Utility for API calls
 async function apiCall(endpoint, method = 'GET', body = null) {
@@ -236,7 +236,7 @@ async function loadCategories() {
         };
         categoriesContainer.appendChild(btn);
     });
-    
+
     const firstCat = categoriesContainer.querySelector('.category');
     if (firstCat) firstCat.click();
 }
@@ -255,7 +255,7 @@ function showCards(cards, sub) {
         cardEl.className = `quizCard ${statusClass}`;
         cardEl.dataset.sub = sub;
         cardEl.dataset.id = card.order;
-        
+
         cardEl.innerHTML = `
             <div class="card-image-wrapper">
                 <img src="${card.img}" alt="${card.title}">
@@ -291,13 +291,13 @@ cardsContainer.addEventListener('click', (e) => {
     const card = startBtn.closest('.quizCard');
     const subName = card.dataset.sub;
     const quizId = card.dataset.id;
-    
+
     const isReview = startBtn.textContent.trim() === 'Review Result';
 
     const encodedSub = encodeURIComponent(subName);
     let url = `./quizPage/quizpage.html?sub=${encodedSub}&id=${quizId}`;
     if (isReview) url += '&mode=review';
-    
+
     window.location.href = url;
 });
 

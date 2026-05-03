@@ -1,6 +1,6 @@
 import { uploadImg } from "../../cloudinary.js";
 
-const API_BASE = 'http://localhost:8000/api';
+const API_BASE = 'https://quizify-backend-nine.vercel.app/api';
 
 // Utility for API calls
 async function apiCall(endpoint, method = 'GET', body = null) {
@@ -74,7 +74,7 @@ async function loadUserProfile() {
             const user = response.data || response.user; // Handle different response formats
             updateUIWithUser(user);
             updateStats(user);
-            
+
             // Mocking history and performance if not in schema yet
             renderHistory(user.quizHistory || []);
             renderPerformance(user.categoryStats || {});
@@ -90,7 +90,7 @@ function updateUIWithUser(user) {
     document.getElementById('userEmail').value = user.email;
     document.getElementById('firstName').value = user.firstName;
     document.getElementById('lastName').value = user.lastName;
-    
+
     if (user.profilePic) {
         document.getElementById('profileAvatar').src = user.profilePic;
     }
@@ -126,7 +126,7 @@ function renderHistory(items) {
         const row = document.createElement('tr');
         const statusClass = quiz.percentage >= 40 ? 'completed' : 'failed';
         const statusLabel = quiz.percentage >= 40 ? 'Completed' : 'Failed';
-        
+
         row.innerHTML = `
             <td>${quiz.quizName}</td>
             <td>${Math.round(quiz.percentage)}%</td>
@@ -140,14 +140,14 @@ function renderHistory(items) {
 function renderPerformance(categories) {
     const container = document.getElementById('performanceBars');
     const catKeys = Object.keys(categories);
-    
+
     if (catKeys.length === 0) return;
-    
+
     container.innerHTML = '';
     catKeys.forEach(cat => {
         const data = categories[cat];
         const percentage = Math.round(data.averagePercentage);
-        
+
         const item = document.createElement('div');
         item.className = 'perf-item';
         item.innerHTML = `
@@ -175,7 +175,7 @@ function updateAchievements(progress) {
     if (best === 100) items[2].classList.replace('locked', 'unlocked');
     // 10 Quizzes
     if (count >= 10) items[3].classList.replace('locked', 'unlocked');
-    
+
     // Note: Streak logic would require backend support, keeping it as-is for now
 }
 
@@ -221,7 +221,7 @@ document.getElementById('avatarUpload').addEventListener('change', async (e) => 
         formData.append('upload_preset', 'quizify'); // Fixed from 'ml_default'
 
         const imageUrl = await uploadImg(formData);
-        
+
         if (imageUrl) { // Check if upload was successful
             const response = await apiCall('/users', 'PUT', { profilePic: imageUrl });
             if (response.status) {

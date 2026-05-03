@@ -1,5 +1,5 @@
 
-const API_URL = 'http://localhost:8000/api/auth';
+const API_URL = 'https://quizify-backend-nine.vercel.app/api/auth';
 
 // DOM elements
 const submitBtn = document.querySelector('#form-submit');
@@ -120,7 +120,7 @@ async function handleLogin() {
 
         localStorage.setItem('Quizify-token', data.token);
         localStorage.setItem('Quizify-user', JSON.stringify(data.user));
-        
+
         showToast('Login successful!', 'success');
         setTimeout(() => {
             window.location.href = '../quizApp/index.html';

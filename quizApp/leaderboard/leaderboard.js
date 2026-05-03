@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:8000/api';
+const API_BASE = 'https://quizify-backend-nine.vercel.app/api';
 
 // Utility for API calls
 async function apiCall(endpoint, method = 'GET', body = null) {
@@ -56,7 +56,7 @@ async function init() {
     // Sidebar Logic
     const sidebar = document.querySelector('.sidebar');
     const toggleBtn = document.querySelector('#toggleSidebar');
-    
+
     const isCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
     if (sidebar && isCollapsed) {
         sidebar.classList.add('collapsed');
@@ -84,7 +84,7 @@ async function init() {
     });
 
     await loadLeaderboard();
-    
+
     // Event Listeners
     userSearch.addEventListener('input', debounce(() => {
         loadLeaderboard();
@@ -108,7 +108,7 @@ async function init() {
 async function loadLeaderboard() {
     const search = userSearch.value;
     const sort = sortFilter.value;
-    
+
     const users = await apiCall(`/users/all?search=${search}&sort=${sort}`);
     if (!users) return;
 
@@ -144,7 +144,7 @@ function renderPodium(users) {
 
 function renderTable(users) {
     userTableBody.innerHTML = '';
-    
+
     users.forEach((user, index) => {
         const tr = document.createElement('tr');
         const rank = index + 1;

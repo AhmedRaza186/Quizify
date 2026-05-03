@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:8000/api';
+const API_BASE = 'https://quizify-backend-nine.vercel.app/api';
 
 // Utility for API calls
 async function apiCall(endpoint, method = 'GET', body = null) {
@@ -50,7 +50,7 @@ const hintBtn = document.getElementById('hint-btn');
 const hintCountDisplay = document.getElementById('hint-count');
 
 // --- Quiz State ---
-let quizData = []; 
+let quizData = [];
 let currentIdx = 0;
 let score = 0;
 let timerInterval;
@@ -98,7 +98,7 @@ async function initQuiz() {
                 hintsLeft = activeQuiz.questionsDetails.hints === -1 ? Infinity : (activeQuiz.questionsDetails.hints || 0);
                 updateHintUI();
             }
-            
+
             renderQuestion();
         } else {
             throw new Error("Quiz Card not found");
@@ -113,7 +113,7 @@ async function initQuiz() {
 // --- Question Rendering ---
 function renderQuestion() {
     const currentQuestion = quizData[currentIdx];
-    
+
     if (isReviewMode) {
         nextBtn.disabled = false;
         nextBtn.textContent = (currentIdx === quizData.length - 1) ? "Exit Review" : "Next Question →";
@@ -121,11 +121,11 @@ function renderQuestion() {
         nextBtn.disabled = true;
         nextBtn.textContent = (currentIdx === quizData.length - 1) ? "Finish Quiz" : "Save & Next";
     }
-    
+
     questionText.textContent = currentQuestion.question;
     qCountDisplay.textContent = `${String(currentIdx + 1).padStart(2, '0')}/${quizData.length}`;
 
-    const qImage = document.getElementById('q-image'); 
+    const qImage = document.getElementById('q-image');
     if (qImage) {
         if (currentQuestion.imageURL) {
             qImage.src = currentQuestion.imageURL;
@@ -144,7 +144,7 @@ function renderQuestion() {
     currentQuestion.options.forEach((option, index) => {
         const button = document.createElement('button');
         button.className = 'option-card';
-        
+
         let badgeHtml = '';
         if (isReviewMode) {
             const userAnswer = previousAnswers[currentIdx];
@@ -196,17 +196,17 @@ async function handleNext() {
     }
 
     clearInterval(timerInterval);
-    
+
     const selectedOption = document.querySelector('.option-card.selected');
     const currentQuestion = quizData[currentIdx];
     let selectedIndex = -1;
-    
+
     const allOptions = Array.from(document.querySelectorAll('.option-card'));
-    
+
     if (selectedOption) {
         selectedIndex = allOptions.indexOf(selectedOption);
         selectedOption.classList.remove('selected'); // Remove selected to let feedback colors shine
-        
+
         // Show feedback immediately
         if (selectedIndex === currentQuestion.correct) {
             selectedOption.classList.add('correct');
@@ -215,7 +215,7 @@ async function handleNext() {
         } else {
             selectedOption.classList.add('incorrect');
             selectedOption.innerHTML += `<span class="review-badge incorrect-badge">Your Answer</span>`;
-            
+
             allOptions[currentQuestion.correct].classList.add('correct');
             allOptions[currentQuestion.correct].innerHTML += `<span class="review-badge correct-badge">Correct Answer</span>`;
         }
@@ -272,7 +272,7 @@ function useHint() {
     if (hintsLeft !== Infinity) {
         hintsLeft--;
     }
-    
+
     updateHintUI();
     hintBtn.disabled = true;
 }
@@ -286,7 +286,7 @@ function startTimer(seconds) {
     timerInterval = setInterval(() => {
         timeLeft--;
         timerText.textContent = timeLeft;
-        
+
         const offset = 138 - (timeLeft / seconds) * 138;
         timerRing.style.strokeDashoffset = offset;
 
@@ -308,11 +308,11 @@ quitBtn.addEventListener('click', () => {
         const msg = "Quit now? Your progress will be lost!";
         if (confirm(msg)) {
             clearInterval(timerInterval);
-            window.location.href = '../index.html'; 
+            window.location.href = '../index.html';
         }
-        
+
     }
-    window.location.href = '../index.html'; 
+    window.location.href = '../index.html';
     return
 });
 
