@@ -26,12 +26,31 @@
         </div>
     </nav>
 
-    <div class="mobile-menu">
-        <button class="close-menu">&times;</button>
-        <a href="#features">Features</a>
-        <a href="./auth/login.html">Login</a>
-        <a href="./auth/signup.html">Get Started</a>
+<!-- Background Overlay -->
+<div class="menu-overlay"></div>
+
+<!-- The Mobile Menu Sheet -->
+<div class="mobile-menu">
+    <div class="mobile-menu-header">
+        <h1>Quiz<span>ify</span></h1>
+        <button class="close-menu"><i class="fas fa-times"></i></button>
     </div>
+    
+    <div class="mobile-nav-links">
+        <a href="#features" style="--i:1"><span>01.</span> Features</a>
+        <a href="./auth/login.html" style="--i:2"><span>02.</span> Login</a>
+        <a href="./auth/signup.html" class="mobile-btn" style="--i:3">Get Started</a>
+    </div>
+
+    <div class="mobile-menu-footer" style="--i:4">
+        <p>Follow our journey</p>
+        <div class="social-icons">
+            <i class="fab fa-github"></i>
+            <i class="fab fa-twitter"></i>
+            <i class="fab fa-discord"></i>
+        </div>
+    </div>
+</div>
 
     <main>
         <section class="hero">
@@ -92,24 +111,25 @@
         <p>&copy; 2026 Quizify. Designed for future masters.</p>
     </footer>
     <script>
-        const menuToggle = document.querySelector('.mobile-nav-toggle');
-        const closeMenu = document.querySelector('.close-menu');
-        const mobileMenu = document.querySelector('.mobile-menu');
-        const menuLinks = document.querySelectorAll('.mobile-menu a');
+const menuToggle = document.querySelector('.mobile-nav-toggle');
+const closeMenu = document.querySelector('.close-menu');
+const mobileMenu = document.querySelector('.mobile-menu');
+const menuOverlay = document.querySelector('.menu-overlay');
+const menuLinks = document.querySelectorAll('.mobile-menu a');
 
-        menuToggle.addEventListener('click', () => {
-            mobileMenu.classList.add('active');
-        });
+const toggleMenu = (isOpen) => {
+    mobileMenu.classList.toggle('active', isOpen);
+    menuOverlay.classList.toggle('active', isOpen);
+    document.body.style.overflow = isOpen ? 'hidden' : 'auto'; // Prevent scrolling when open
+};
 
-        closeMenu.addEventListener('click', () => {
-            mobileMenu.classList.remove('active');
-        });
+menuToggle.addEventListener('click', () => toggleMenu(true));
+closeMenu.addEventListener('click', () => toggleMenu(false));
+menuOverlay.addEventListener('click', () => toggleMenu(false));
 
-        menuLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                mobileMenu.classList.remove('active');
-            });
-        });
+menuLinks.forEach(link => {
+    link.addEventListener('click', () => toggleMenu(false));
+});
     </script>
 </body>
 </html>
