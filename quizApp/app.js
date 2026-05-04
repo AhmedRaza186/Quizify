@@ -158,14 +158,6 @@ if (dp) {
     });
 }
 
-// Quizzes Navigation
-let quizzesBtn = document.querySelector('#quizzesLink');
-if (quizzesBtn) {
-    quizzesBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        document.querySelector('#quizContainer').scrollIntoView({ behavior: 'smooth' });
-    });
-}
 
 // Logout Functionality for both sidebar and bottom nav
 document.querySelectorAll('.logout-btn').forEach(btn => {

@@ -30,6 +30,28 @@ body {
     overflow-x: hidden;
 }
 
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
+.disabled {
+    cursor: not-allowed !important;
+    opacity: 0.6;
+}
+
 .container {
     display: flex;
     min-height: 100vh;

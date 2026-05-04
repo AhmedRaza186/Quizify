@@ -149,7 +149,7 @@ function setPublicViewMode() {
     if (publicBadge) publicBadge.style.display = 'inline-flex';
     if (backBtn) {
         backBtn.style.display = 'flex';
-        backBtn.onclick = () => window.location.href = '../leaderboard/leaderboard.html';
+        backBtn.onclick = () => window.history.back();
     }
     if (avatarEdit) avatarEdit.style.display = 'none';
     if (settingsSection) settingsSection.style.display = 'none';
@@ -159,6 +159,24 @@ function setPublicViewMode() {
 
 function updateUIWithUser(user) {
     document.getElementById('userFullName').textContent = `${user.firstName} ${user.lastName}`;
+
+    const avatarImg = document.getElementById('profileAvatar');
+
+    if (user.profilePic) {
+        avatarImg.src = user.profilePic;
+    } else {
+
+        const initials = (user.firstName?.[0] || '') + (user.lastName?.[0] || '');
+        
+        avatarImg.style.display = 'none';
+
+        let fallback = document.createElement('div');
+        fallback.className = 'avatar-fallback';
+        fallback.innerText = initials.toUpperCase();
+
+        avatarImg.parentElement.appendChild(fallback);
+    }
+
     const emailInput = document.getElementById('userEmail');
     const fNameInput = document.getElementById('firstName');
     const lNameInput = document.getElementById('lastName');
@@ -167,14 +185,12 @@ function updateUIWithUser(user) {
     if (fNameInput) fNameInput.value = user.firstName || '';
     if (lNameInput) lNameInput.value = user.lastName || '';
 
-    if (user.profilePic) {
-        document.getElementById('profileAvatar').src = user.profilePic;
-    }
-
     if (user.createdAt) {
         const date = new Date(user.createdAt);
-        document.getElementById('joinDate').textContent = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        document.getElementById('joinDate').textContent =
+            date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
     }
+
 }
 
 async function loadQuizHistory() {
@@ -192,10 +208,17 @@ function renderHistory(items) {
     const tbody = document.getElementById('historyTableBody');
     tbody.innerHTML = '';
 
-    if (items.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" class="empty-msg">No quizzes played yet.</td></tr>';
+     if (!items || items.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="4" class="empty-msg">
+                    🧠 No quizzes played yet.
+                </td>
+            </tr>
+        `;
         return;
     }
+
 
     items.forEach(quiz => {
         const row = document.createElement('tr');
@@ -216,8 +239,14 @@ function renderPerformance(categories) {
     const container = document.getElementById('performanceBars');
     const catKeys = Object.keys(categories);
 
-    if (catKeys.length === 0) return;
-
+    if (!categories || Object.keys(categories).length === 0) {
+        container.innerHTML = `
+            <p class="empty-msg">
+                📊 No performance data yet.
+            </p>
+        `;
+        return;
+    }
     container.innerHTML = '';
     catKeys.forEach(cat => {
         const data = categories[cat];

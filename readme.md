@@ -43,6 +43,13 @@
 - **Styling:** Custom CSS + Google Fonts (Plus Jakarta Sans)  
 
 ---
+## 📂 Repositories
+
+- **Frontend**: https://github.com/AhmedRaza186/Quizify
+- **Backend**: https://github.com/AhmedRaza186/Quizify-Backend
+
+---
+
 
 ## ⚡ Usage
 

@@ -632,6 +632,10 @@ h3 {
     background: var(--text-muted);
 }
 
+.disabled {
+    cursor: not-allowed !important;
+    opacity: 0.6;
+}
 /* --- BOTTOM NAV (MOBILE) --- */
 .bottom-nav {
     position: fixed;

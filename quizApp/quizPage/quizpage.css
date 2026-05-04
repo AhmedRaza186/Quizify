@@ -18,6 +18,23 @@ body {
     height: 100vh;
     overflow-x: hidden;
 }
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
 
 .quiz-full-page {
     height: 100vh;
@@ -385,26 +402,30 @@ body {
 }
 
 /* Live Feedback and Review Mode Styles */
-.option-card.correct, .option-card.correct-review {
+.option-card.correct,
+.option-card.correct-review {
     background: rgba(16, 185, 129, 0.2) !important;
     border: 2px solid #10b981 !important;
     box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
     transform: scale(1.02);
 }
 
-.option-card.correct .option-letter, .option-card.correct-review .option-letter {
+.option-card.correct .option-letter,
+.option-card.correct-review .option-letter {
     background: #10b981 !important;
     color: white !important;
     box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
 }
 
-.option-card.incorrect, .option-card.incorrect-review {
+.option-card.incorrect,
+.option-card.incorrect-review {
     background: rgba(239, 68, 68, 0.2) !important;
     border: 2px solid #ef4444 !important;
     box-shadow: 0 0 30px rgba(239, 68, 68, 0.3);
 }
 
-.option-card.incorrect .option-letter, .option-card.incorrect-review .option-letter {
+.option-card.incorrect .option-letter,
+.option-card.incorrect-review .option-letter {
     background: #ef4444 !important;
     color: white !important;
     box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
