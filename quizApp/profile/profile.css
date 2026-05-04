@@ -93,6 +93,7 @@ h1, h2, h3, .logo {
 }
 
 .sidebar-toggle {
+        display: none;
     background: transparent;
     border: none;
     color: var(--text-muted);
@@ -101,7 +102,7 @@ h1, h2, h3, .logo {
     padding: 5px;
     border-radius: 8px;
     transition: 0.3s;
-    display: flex;
+    /* display: flex; */
     align-items: center;
     justify-content: center;
 }
@@ -599,4 +600,81 @@ html {
 .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); display: none; z-index: 1000; }
 .overlay.active { display: block; }
 
+/* Skeleton Loader System */
+.skeleton {
+    background: linear-gradient(90deg, 
+        rgba(255, 255, 255, 0.03) 25%, 
+        rgba(255, 255, 255, 0.08) 50%, 
+        rgba(255, 255, 255, 0.03) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite linear;
+    border-radius: 12px;
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.skeleton-avatar { height: 140px; width: 140px; border-radius: 40px; }
+.skeleton-title-lg { height: 40px; width: 250px; border-radius: 8px; margin-bottom: 10px; }
+.skeleton-text-md { height: 20px; width: 150px; border-radius: 6px; }
+
+.skeleton-stat { height: 100px; width: 100%; border-radius: 20px; background: rgba(255, 255, 255, 0.03); }
+.skeleton-perf-bar { height: 40px; width: 100%; border-radius: 8px; margin-bottom: 15px; }
+
 .empty-msg { color: var(--text-muted); font-size: 0.9rem; font-style: italic; text-align: center; padding: 20px; }
+
+/* Public View Styles */
+.header-top-actions {
+    margin-bottom: 20px;
+}
+
+.back-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.back-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(-5px);
+}
+
+.name-badge-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.public-badge {
+    background: linear-gradient(135deg, rgba(34, 211, 238, 0.2), rgba(79, 70, 229, 0.2));
+    border: 1px solid rgba(34, 211, 238, 0.3);
+    color: var(--accent);
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    box-shadow: 0 0 15px rgba(34, 211, 238, 0.1);
+}
+
+.stat-icon.views {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.stat-card:hover .stat-icon.views {
+    background: #10b981;
+    color: white;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+}
+
+@media (max-width: 768px) {
+    .name-badge-row { flex-direction: column; gap: 8px; }
+}

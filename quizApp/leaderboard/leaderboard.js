@@ -1,4 +1,6 @@
-const API_BASE = 'https://quizify-backend-nine.vercel.app/api';
+const API_BASE = window.location.hostname === "localhost"
+  ? "http://localhost:8000/api"
+  : "https://quizify-backend-nine.vercel.app/api";
 
 // Utility for API calls
 async function apiCall(endpoint, method = 'GET', body = null) {
@@ -106,6 +108,8 @@ async function init() {
 }
 
 async function loadLeaderboard() {
+    showLeaderboardSkeletons();
+    
     const search = userSearch.value;
     const sort = sortFilter.value;
 
@@ -117,13 +121,51 @@ async function loadLeaderboard() {
     renderTable(users);
 }
 
+function showLeaderboardSkeletons() {
+    // Show podium skeletons
+    [1, 2, 3].forEach(rank => {
+        const nameEl = document.getElementById(`top${rank}-name`);
+        const scoreEl = document.getElementById(`top${rank}-score`);
+        const imgEl = document.getElementById(`top${rank}-img`);
+        if (nameEl) nameEl.innerHTML = `<div class="skeleton skeleton-podium-name"></div>`;
+        if (scoreEl) scoreEl.innerHTML = `<div class="skeleton skeleton-podium-score"></div>`;
+        if (imgEl) {
+            imgEl.innerHTML = `<div class="skeleton skeleton-podium-img" style="width: 100%; height: 100%; border-radius: 50%"></div>`;
+            imgEl.style.backgroundImage = 'none';
+        }
+    });
+
+    // Show table skeletons
+    userTableBody.innerHTML = Array(5).fill(0).map(() => `
+        <tr class="skeleton-row">
+            <td><div class="skeleton sk-item sk-rank"></div></td>
+            <td>
+                <div class="user-info">
+                    <div class="skeleton sk-item sk-avatar"></div>
+                    <div class="user-details">
+                        <div class="skeleton sk-item sk-name"></div>
+                        <div class="skeleton sk-item sk-email"></div>
+                    </div>
+                </div>
+            </td>
+            <td><div class="skeleton sk-item sk-progress"></div></td>
+            <td><div class="skeleton sk-item sk-rank" style="width: 80px"></div></td>
+            <td><div class="skeleton sk-item sk-rank" style="width: 100px"></div></td>
+        </tr>
+    `).join('');
+}
+
 function renderPodium(users) {
-    // For podium, we always want the top 3 by rank, regardless of search/filter
-    // But for simplicity here, we'll take the top 3 from current result if sorted by rank
     const top3 = users.slice(0, 3);
 
     top3.forEach((user, index) => {
         const rank = index + 1;
+        const item = document.querySelector(`.podium-item:nth-child(${rank === 1 ? 2 : (rank === 2 ? 1 : 3)})`);
+        if (item) {
+            item.style.cursor = 'pointer';
+            item.onclick = () => window.location.href = `../profile/profile.html?uid=${user._id}`;
+        }
+
         const nameEl = document.getElementById(`top${rank}-name`);
         const scoreEl = document.getElementById(`top${rank}-score`);
         const imgEl = document.getElementById(`top${rank}-img`);
@@ -147,6 +189,9 @@ function renderTable(users) {
 
     users.forEach((user, index) => {
         const tr = document.createElement('tr');
+        tr.style.cursor = 'pointer';
+        tr.onclick = () => window.location.href = `../profile/profile.html?uid=${user._id}`;
+        
         const rank = index + 1;
         const initials = (user.firstName[0] + user.lastName[0]).toUpperCase();
         const joinDate = new Date(user.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });

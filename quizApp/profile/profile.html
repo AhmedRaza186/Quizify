@@ -37,17 +37,27 @@
             <!-- Profile Header Section -->
             <section class="profile-header-section">
                 <div class="profile-card hero-card">
+                    <div class="header-top-actions">
+                        <button id="backToLeaderboard" class="back-btn" style="display: none;">
+                            <i class="fas fa-arrow-left"></i> Back to Leaderboard
+                        </button>
+                    </div>
                     <div class="profile-info-main">
                         <div class="avatar-wrapper">
                             <img id="profileAvatar" src="../quizAssets/default-avatar.png" alt="Profile Avatar">
-                            <label for="avatarUpload" class="avatar-edit-overlay">
+                            <label for="avatarUpload" class="avatar-edit-overlay" id="avatarEditLabel">
                                 <i class="fas fa-camera"></i>
                                 <span>Change</span>
                             </label>
                             <input type="file" id="avatarUpload" accept="image/*" hidden>
                         </div>
                         <div class="user-meta">
-                            <h1 id="userFullName">Loading...</h1>
+                            <div class="name-badge-row">
+                                <h1 id="userFullName">Loading...</h1>
+                                <span class="badge-pill public-badge" id="publicBadge" style="display: none;">
+                                    <i class="fas fa-eye"></i> Public View
+                                </span>
+                            </div>
                             <p id="userTagline">Quiz Enthusiast</p>
                             <div class="user-badges-inline">
                                 <span class="badge-pill"><i class="fas fa-calendar-alt"></i> Joined <span id="joinDate">May 2026</span></span>
@@ -81,10 +91,10 @@
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon rank"><i class="fas fa-crown"></i></div>
+                    <div class="stat-icon views"><i class="fas fa-eye"></i></div>
                     <div class="stat-content">
-                        <p>Global Rank</p>
-                        <h2 id="globalRank">#--</h2>
+                        <p>Profile Views</p>
+                        <h2 id="profileViews">0</h2>
                     </div>
                 </div>
             </section>

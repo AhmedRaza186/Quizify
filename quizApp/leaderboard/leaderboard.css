@@ -95,6 +95,7 @@ body {
 }
 
 .sidebar-toggle {
+        display: none;
     background: transparent;
     border: none;
     color: var(--text-muted);
@@ -103,7 +104,7 @@ body {
     padding: 5px;
     border-radius: 8px;
     transition: 0.3s;
-    display: flex;
+    /* display: flex; */
     align-items: center;
     justify-content: center;
 }
@@ -611,3 +612,31 @@ html {
 /* Utility classes */
 .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); display: none; z-index: 99; }
 .overlay.active { display: block; }
+
+/* Skeleton Loader System */
+.skeleton {
+    background: linear-gradient(90deg, 
+        rgba(255, 255, 255, 0.03) 25%, 
+        rgba(255, 255, 255, 0.08) 50%, 
+        rgba(255, 255, 255, 0.03) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite linear;
+    border-radius: 12px;
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.skeleton-podium-img { height: 100px; width: 100px; border-radius: 50%; margin: 0 auto 15px; }
+.skeleton-podium-name { height: 20px; width: 80%; margin: 0 auto 10px; border-radius: 6px; }
+.skeleton-podium-score { height: 25px; width: 50%; margin: 0 auto; border-radius: 8px; }
+
+.skeleton-row td { padding: 15px 10px; vertical-align: middle; }
+.sk-item { display: inline-block; }
+.sk-rank { height: 20px; width: 30px; border-radius: 4px; }
+.sk-avatar { height: 45px; width: 45px; border-radius: 50%; }
+.sk-name { height: 18px; width: 120px; border-radius: 4px; margin-bottom: 5px; }
+.sk-email { height: 14px; width: 150px; border-radius: 4px; }
+.sk-progress { height: 25px; width: 100px; border-radius: 6px; }

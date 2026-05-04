@@ -1,7 +1,8 @@
 // imports
 import { uploadImg } from "../cloudinary.js";
-
-const API_BASE = 'https://quizify-backend-nine.vercel.app/api';
+const API_BASE = window.location.hostname === "localhost"
+  ? "http://localhost:8000/api"
+  : "https://quizify-backend-nine.vercel.app/api";
 
 // Utility for API calls
 async function apiCall(endpoint, method = 'GET', body = null) {
@@ -177,7 +178,31 @@ document.querySelectorAll('.logout-btn').forEach(btn => {
 });
 
 // Categories & Sub-categories Display
+function showCategorySkeletons() {
+    categoriesContainer.innerHTML = Array(4).fill(0).map(() => `<div class="skeleton-category skeleton"></div>`).join('');
+}
+
+function showSubCategorySkeletons() {
+    subCategoriesContainer.innerHTML = Array(3).fill(0).map(() => `<div class="skeleton-subCategory skeleton"></div>`).join('');
+}
+
+function showCardSkeletons() {
+    cardsContainer.innerHTML = Array(4).fill(0).map(() => `
+        <div class="skeleton-card">
+            <div class="skeleton-img skeleton"></div>
+            <div class="skeleton-title skeleton"></div>
+            <div class="skeleton-progress skeleton"></div>
+            <div class="skeleton-meta skeleton"></div>
+            <div class="skeleton-btn skeleton"></div>
+        </div>
+    `).join('');
+}
+
 async function loadCategories() {
+    showCategorySkeletons();
+    showSubCategorySkeletons();
+    showCardSkeletons();
+
     let categories = await apiCall('/quiz/categories');
     if (!categories) return;
 
@@ -191,14 +216,16 @@ async function loadCategories() {
             document.querySelectorAll('.category').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
 
-            subCategoriesContainer.innerHTML = '';
-            cardsContainer.innerHTML = '';
+            showSubCategorySkeletons();
+            showCardSkeletons();
 
             if (!cat.subCategories || cat.subCategories.length === 0) {
                 subCategoriesContainer.innerHTML = `<p style="color: gray">Coming soon...</p>`;
+                cardsContainer.innerHTML = '';
                 return;
             }
 
+            subCategoriesContainer.innerHTML = '';
             cat.subCategories.forEach((sub, i) => {
                 let subBtn = document.createElement('button');
                 subBtn.className = 'subCategory';
@@ -207,6 +234,8 @@ async function loadCategories() {
                 subBtn.addEventListener('click', async () => {
                     document.querySelectorAll('.subCategory').forEach(b => b.classList.remove('active'));
                     subBtn.classList.add('active');
+
+                    showCardSkeletons();
 
                     const cards = await apiCall(`/quiz/cards/${sub}`);
                     const userProgress = await apiCall(`/quiz/progress?subName=${sub}`);

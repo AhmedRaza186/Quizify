@@ -1,7 +1,8 @@
-import { uploadImg } from "../../cloudinary.js";
 
-const API_BASE = 'https://quizify-backend-nine.vercel.app/api';
 
+const API_BASE = window.location.hostname === "localhost"
+  ? "http://localhost:8000/api"
+  : "https://quizify-backend-nine.vercel.app/api";
 // Utility for API calls
 async function apiCall(endpoint, method = 'GET', body = null) {
     const token = localStorage.getItem('Quizify-token');
@@ -11,12 +12,25 @@ async function apiCall(endpoint, method = 'GET', body = null) {
     const config = { method, headers };
     if (body) config.body = JSON.stringify(body);
 
-    const response = await fetch(`${API_BASE}${endpoint}`, config);
-    return await response.json();
+    try {
+        const response = await fetch(`${API_BASE}${endpoint}`, config);
+        const data = await response.json();
+
+        if (!response.ok || !data.status) {
+            throw new Error(data.message || 'API failed');
+        }
+
+        return data.data; // ✅ FIX (same as leaderboard)
+    } catch (err) {
+        console.error(err);
+        return null;
+    }
 }
 
 // Global state
 let quizHistory = [];
+const urlParams = new URLSearchParams(window.location.search);
+const targetUid = urlParams.get('uid');
 
 document.addEventListener('DOMContentLoaded', async () => {
     const token = localStorage.getItem('Quizify-token');
@@ -26,9 +40,43 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     setupSidebar();
+    showProfileSkeletons();
     await loadUserProfile();
     await loadQuizHistory();
 });
+
+function showProfileSkeletons() {
+    // Header skeletons
+    document.getElementById('userFullName').innerHTML = `<div class="skeleton skeleton-title-lg"></div>`;
+    // document.getElementById('userTagline').innerHTML = `<div class="skeleton skeleton-text-md"></div>`;
+
+    // Stats skeletons
+    ['totalQuizzes', 'avgScore', 'bestScore', 'profileViews'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = `<div class="skeleton" style="height: 25px; width: 60px; margin: 0 auto"></div>`;
+    });
+
+    // History Table skeletons
+    const historyBody = document.getElementById('historyTableBody');
+    if (historyBody) {
+        historyBody.innerHTML = Array(3).fill(0).map(() => `
+            <tr>
+                <td><div class="skeleton" style="height: 20px; width: 120px"></div></td>
+                <td><div class="skeleton" style="height: 20px; width: 60px"></div></td>
+                <td><div class="skeleton" style="height: 20px; width: 100px"></div></td>
+                <td><div class="skeleton" style="height: 20px; width: 80px; border-radius: 20px"></div></td>
+            </tr>
+        `).join('');
+    }
+
+    // Performance skeletons
+    const perfBars = document.getElementById('performanceBars');
+    if (perfBars) {
+        perfBars.innerHTML = Array(3).fill(0).map(() => `
+            <div class="skeleton-perf-bar skeleton"></div>
+        `).join('');
+    }
+}
 
 function setupSidebar() {
     const sidebar = document.querySelector('#sidebar');
@@ -68,28 +116,56 @@ function setupSidebar() {
 }
 
 async function loadUserProfile() {
+    console.log(targetUid);
     try {
-        const response = await apiCall('/users');
-        if (response.status) {
-            const user = response.data || response.user; // Handle different response formats
-            updateUIWithUser(user);
-            updateStats(user);
+        const endpoint = targetUid ? `/users/${targetUid}` : '/users';
 
-            // Mocking history and performance if not in schema yet
-            renderHistory(user.quizHistory || []);
-            renderPerformance(user.categoryStats || {});
+        const user = await apiCall(endpoint);
+
+        if (!user) return;
+
+        updateUIWithUser(user);
+        updateStats(user);
+
+        // Mocking history and performance if not in schema yet
+        renderHistory(user.quizHistory || []);
+        renderPerformance(user.categoryStats || {});
             updateAchievements(user);
-        }
+
+            if (targetUid) {
+                setPublicViewMode();
+            }
     } catch (err) {
         console.error('Failed to load profile:', err);
     }
 }
 
+function setPublicViewMode() {
+    const publicBadge = document.getElementById('publicBadge');
+    const backBtn = document.getElementById('backToLeaderboard');
+    const avatarEdit = document.getElementById('avatarEditLabel');
+    const settingsSection = document.querySelector('.settings-section');
+
+    if (publicBadge) publicBadge.style.display = 'inline-flex';
+    if (backBtn) {
+        backBtn.style.display = 'flex';
+        backBtn.onclick = () => window.location.href = '../leaderboard/leaderboard.html';
+    }
+    if (avatarEdit) avatarEdit.style.display = 'none';
+    if (settingsSection) settingsSection.style.display = 'none';
+
+    document.title = `${document.getElementById('userFullName').textContent} | Quizify`;
+}
+
 function updateUIWithUser(user) {
     document.getElementById('userFullName').textContent = `${user.firstName} ${user.lastName}`;
-    document.getElementById('userEmail').value = user.email;
-    document.getElementById('firstName').value = user.firstName;
-    document.getElementById('lastName').value = user.lastName;
+    const emailInput = document.getElementById('userEmail');
+    const fNameInput = document.getElementById('firstName');
+    const lNameInput = document.getElementById('lastName');
+
+    if (emailInput) emailInput.value = user.email || '';
+    if (fNameInput) fNameInput.value = user.firstName || '';
+    if (lNameInput) lNameInput.value = user.lastName || '';
 
     if (user.profilePic) {
         document.getElementById('profileAvatar').src = user.profilePic;
@@ -109,8 +185,7 @@ function updateStats(user) {
     document.getElementById('totalQuizzes').textContent = user.quizPlayed || 0;
     document.getElementById('avgScore').textContent = `${Math.round(user.progress || 0)}%`;
     document.getElementById('bestScore').textContent = `${Math.round(user.bestScore || 0)}%`;
-    // Rank would normally be calculated or returned
-    document.getElementById('globalRank').textContent = user.rank ? `#${user.rank}` : '#--';
+    document.getElementById('profileViews').textContent = user.profileViews || 0;
 }
 
 function renderHistory(items) {

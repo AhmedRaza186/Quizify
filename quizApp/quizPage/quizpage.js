@@ -1,4 +1,6 @@
-const API_BASE = 'https://quizify-backend-nine.vercel.app/api';
+const API_BASE = window.location.hostname === "localhost"
+  ? "http://localhost:8000/api"
+  : "https://quizify-backend-nine.vercel.app/api";
 
 // Utility for API calls
 async function apiCall(endpoint, method = 'GET', body = null) {
@@ -161,11 +163,24 @@ function renderQuestion() {
             button.style.pointerEvents = 'none';
         }
 
-        button.innerHTML = `
-            <span class="option-letter">${String.fromCharCode(65 + index)}</span>
-            <span class="option-text">${option}</span>
-            ${badgeHtml}
-        `;
+        // Create elements manually to safely set textContent for the option
+        const letterSpan = document.createElement('span');
+        letterSpan.className = 'option-letter';
+        letterSpan.textContent = String.fromCharCode(65 + index);
+
+        const textSpan = document.createElement('span');
+        textSpan.className = 'option-text';
+        textSpan.textContent = option;
+
+        button.appendChild(letterSpan);
+        button.appendChild(textSpan);
+
+        if (badgeHtml) {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = badgeHtml;
+            button.appendChild(tempDiv.firstChild);
+        }
+
         if (!isReviewMode) button.onclick = () => handleSelect(button);
         optionsGrid.appendChild(button);
     });

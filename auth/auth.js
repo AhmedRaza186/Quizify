@@ -1,5 +1,7 @@
+const API_URL = window.location.hostname === "localhost"
+  ? "http://localhost:8000/api/auth"
+  : "https://quizify-backend-nine.vercel.app/api/auth";
 
-const API_URL = 'https://quizify-backend-nine.vercel.app/api/auth';
 
 // DOM elements
 const submitBtn = document.querySelector('#form-submit');

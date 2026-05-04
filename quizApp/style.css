@@ -103,6 +103,7 @@ h3 {
 }
 
 .sidebar-toggle {
+    display: none;
     background: transparent;
     border: none;
     color: var(--text-muted);
@@ -111,7 +112,7 @@ h3 {
     padding: 5px;
     border-radius: 8px;
     transition: 0.3s;
-    display: flex;
+    /* display: flex; */
     align-items: center;
     justify-content: center;
 }
@@ -709,23 +710,55 @@ html {
 
 /* Mobile Responsive Updates */
 @media (max-width: 1024px) {
-    .sidebar { display: none !important; }
-    .main-content { 
-        margin-left: 0 !important; 
-        padding: 20px 20px 140px !important; 
+    .sidebar {
+        display: none !important;
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+        padding: 20px 20px 140px !important;
         width: 100% !important;
         max-width: 100vw !important;
         overflow-x: hidden;
     }
-    .bottom-nav { display: flex !important; }
-    
-    .header { padding: 30px 20px; border-radius: 24px; flex-direction: column; text-align: center; gap: 20px; width: 100%; }
-    .greetingSide h1 { font-size: 2.2rem; }
-    .circle { width: 70px; height: 70px; }
-    
-    .avgScoreCard { flex-direction: column; gap: 30px; text-align: center; padding: 30px 20px; width: 100%; }
-    .progressWrapper { width: 100% !important; }
-    .scoreText h2 { font-size: 3.2rem; }
+
+    .bottom-nav {
+        display: flex !important;
+    }
+
+    .header {
+        padding: 30px 20px;
+        border-radius: 24px;
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+        width: 100%;
+    }
+
+    .greetingSide h1 {
+        font-size: 2.2rem;
+    }
+
+    .circle {
+        width: 70px;
+        height: 70px;
+    }
+
+    .avgScoreCard {
+        flex-direction: column;
+        gap: 30px;
+        text-align: center;
+        padding: 30px 20px;
+        width: 100%;
+    }
+
+    .progressWrapper {
+        width: 100% !important;
+    }
+
+    .scoreText h2 {
+        font-size: 3.2rem;
+    }
 }
 
 @media (max-width: 768px) {
@@ -789,4 +822,78 @@ html {
 
 .overlay.active {
     display: block;
+}
+
+/* Skeleton Loader System */
+.skeleton {
+    background: linear-gradient(90deg, 
+        rgba(255, 255, 255, 0.03) 25%, 
+        rgba(255, 255, 255, 0.08) 50%, 
+        rgba(255, 255, 255, 0.03) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite linear;
+    border-radius: 12px;
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.skeleton-category {
+    height: 45px;
+    width: 120px;
+    border-radius: 50px;
+    margin-right: 15px;
+    display: inline-block;
+}
+
+.skeleton-subCategory {
+    height: 40px;
+    width: 100px;
+    border-radius: 12px;
+    margin-right: 10px;
+    display: inline-block;
+}
+
+.skeleton-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    height: 380px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.skeleton-card .skeleton-img {
+    height: 180px;
+    width: 100%;
+    border-radius: 18px;
+}
+
+.skeleton-card .skeleton-title {
+    height: 25px;
+    width: 70%;
+    border-radius: 8px;
+}
+
+.skeleton-card .skeleton-progress {
+    height: 8px;
+    width: 100%;
+    border-radius: 4px;
+}
+
+.skeleton-card .skeleton-meta {
+    height: 20px;
+    width: 50%;
+    border-radius: 6px;
+}
+
+.skeleton-card .skeleton-btn {
+    height: 45px;
+    width: 100%;
+    border-radius: 14px;
+    margin-top: auto;
 }
