@@ -1,87 +1,134 @@
-# Quizify – Interactive Quiz Dashboard
+# Quizify 🚀
 
-![Quizify Banner](./assets/thumbnail.png/800x200?text=Quizify+Dashboard)  
-
-**Quizify** is a modern, interactive quiz platform built with HTML, CSS, and JavaScript. Users can explore categories, track progress, attempt quizzes, and update their profile with a sleek, responsive UI.
+**Quizify** is a modern full‑stack quiz platform that lets users register, take quizzes across multiple categories, track their performance, and compete on a leaderboard. Built with a clean, responsive UI and a robust Node.js/Express backend, it showcases best‑in‑class authentication, image handling, and analytics.
 
 ---
 
-## 🚀 Features
+## ✨ Features
 
-- **Dashboard**
-  - User greeting with dynamic name and profile picture.
-  - Average score visualization with progress bars.
-  - Quiz categories and sub-categories display.
-
-- **Quiz Functionality**
-  - Start and attempt quizzes with multiple-choice questions.
-  - Visual feedback for completed quizzes (Mastered / Failed).
-  - Progress tracking per quiz category.
-
-- **Profile Management**
-  - Update first & last name.
-  - Upload or change profile picture.
-  - Real-time dashboard update after profile changes.
-
-- **UI/UX**
-  - Responsive design for desktop and mobile.
-  - Smooth animations for cards and modals.
-  - Sidebar navigation with logout button.
-
-- **Dynamic Data Handling**
-  - Fetches categories, sub-categories, and quizzes from Firebase.
-  - Tracks individual user progress.
-  - Real-time updates of quiz completion and scores.
+- 🔐 **JWT‑based authentication** (signup, login, email verification, password reset)
+- 📚 **Quiz system** with categories, multiple‑choice questions, and instant feedback
+- 🏆 **Leaderboard** with ranking and score aggregation
+- 👤 **User profiles** with avatar upload via Cloudinary
+- 📈 **Quiz history** and **category‑wise performance analytics**
+- 📱 **Responsive UI** – sidebar navigation on desktop, bottom navigation on mobile
+- 🎨 **Smooth animations** and skeleton loaders for a premium feel
 
 ---
 
-## 🛠 Tech Stack
+## 🛠️ Tech Stack
 
-- **Frontend:** HTML5, CSS3, JavaScript (ES6 Modules)  
-- **Backend / Data:** Firebase Firestore  
-- **Cloud Upload:** Cloudinary for profile images  
-- **Styling:** Custom CSS + Google Fonts (Plus Jakarta Sans)  
-
----
-## 📂 Repositories
-
-- **Frontend**: https://github.com/AhmedRaza186/Quizify
-- **Backend**: https://github.com/AhmedRaza186/Quizify-Backend
+| Layer | Technology |
+|-------|------------|
+| **Frontend** | HTML5, CSS3 (custom + Google Fonts), Vanilla JavaScript (ES6 modules) |
+| **Backend** | Node.js, Express.js |
+| **Database** | MongoDB with Mongoose |
+| **Auth** | JSON Web Tokens (JWT) |
+| **File Storage** | Cloudinary (avatar uploads) |
+| **API** | RESTful endpoints |
 
 ---
 
+## 📂 Project Structure
 
-## ⚡ Usage
+```
+Quizify/
+├── backend/                 # Express API server
+│   ├── src/
+│   │   ├── controllers/    # Request handlers
+│   │   ├── models/         # Mongoose schemas (User, Quiz, Result, …)
+│   │   ├── routes/         # API routes
+│   │   └── index.js        # Server entry point
+│   └── package.json
+├── quizApp/                # Frontend static site
+│   ├── assets/             # Images, icons, etc.
+│   ├── index.html
+│   ├── style.css
+│   └── app.js              # Core UI logic
+├── .env                    # Environment variables (JWT secret, DB URI, Cloudinary creds)
+└── README.md
+```
 
-1. Clone the repository:
+---
 
-```bash
-git clone https://github.com/AhmedRaza186/Quizify.git
+## 🌐 API Endpoints
 
-2.Install dependencies (Firebase & Cloudinary credentials needed):
+**Base URLs**
+- **Local:** `http://localhost:8000/api`
+- **Production:** `https://quizify-backend-nine.vercel.app/api`
 
-3.Add Firebase config to firebase.js
+### Authentication
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/auth/signup` | Register a new user (email verification sent) |
+| POST | `/auth/login` | Obtain JWT token |
+| POST | `/auth/verify-otp` | Verify email OTP |
+| POST | `/auth/resend-otp` | Resend verification code |
+| POST | `/auth/forgot-password` | Request password reset |
+| POST | `/auth/reset-password` | Set new password with token |
 
-4.Add Cloudinary upload preset in cloudinary.js
+### Quiz Management
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/quizzes` | List all quiz categories |
+| GET | `/quizzes/:categoryId` | Get quizzes for a category |
+| POST | `/quizzes/:quizId/attempt` | Submit answers, receive score |
 
-5.Open index.html in your browser to start the dashboard.
+### User Data
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/users/me` | Profile data (requires JWT) |
+| PUT | `/users/me` | Update name, avatar (multipart) |
+| GET | `/users/me/history` | Quiz attempt history |
+| GET | `/users/me/analytics` | Category‑wise performance |
 
-6.Click Start Quiz on any quiz card to navigate to the quiz page.
+---
 
+## 📦 Installation & Setup
 
+1. **Clone the repositories**
+   ```bash
+   # Frontend
+   git clone https://github.com/AhmedRaza186/Quizify.git
+   # Backend
+   git clone https://github.com/AhmedRaza186/Quizify-Backend.git
+   ```
+2. **Backend setup**
+   ```bash
+   cd Quizify-Backend
+   npm install
+   cp .env.example .env   # set MONGODB_URI, JWT_SECRET, CLOUDINARY_* variables
+   npm run dev   # starts server on http://localhost:8000
+   ```
+3. **Frontend setup**
+   ```bash
+   cd Quizify
+   # No npm dependencies – just open the site
+   # If you prefer a dev server:
+   npx http-server . -p 3000
+   ```
+4. **Configure Cloudinary** – add your upload preset and cloud name in `cloudinary.js`.
+5. Open `quizApp/index.html` in the browser (or visit `http://localhost:3000`) and start exploring.
 
-🧩 Future Improvements
+---
 
-Add sound effects for next question, hints, and completion.
+## 📈 Future Improvements
 
-Implement timer-based scoring and notifications.
+- 🎧 Add sound effects for quiz interactions
+- ⏱️ Implement timed quizzes with scoring multipliers
+- 🔔 Real‑time notifications (WebSocket) for new challenges
+- 📊 Advanced analytics dashboard for admin users
+- 🌙 Dark‑mode toggle
+- 🧪 Comprehensive unit & integration test suite (Jest, Cypress)
 
-Add leaderboards to track top users per category.
+---
 
-Dark/light mode toggle for better UX.
+## 👤 Author
 
+**Ahmed Raza** – Full‑stack developer passionate about creating engaging web experiences. Connect on [GitHub](https://github.com/AhmedRaza186).
 
+---
 
-👤 Author
+## 📄 License
 
-Ahmed – Passionate web developer exploring dynamic front-end interfaces.
+This project is intended for **educational and portfolio purposes**. Feel free to fork, modify, and showcase it, but do not use it for commercial production without proper licensing.
