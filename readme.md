@@ -61,15 +61,15 @@
 | PUT | `/users` | Update user profile |
 | DELETE | `/users` | Delete user account |
 
+---
 ## 🔐 Auth Protection
 
 Protected routes require JWT token:
 
 ```http
 Authorization: <token>
-
+```
 ---
-
 ## 📦 Installation & Setup
 
 1. **Clone the repositories**
