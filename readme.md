@@ -29,28 +29,6 @@
 
 ---
 
-## 📂 Project Structure
-
-```
-Quizify/
-├── backend/                 # Express API server
-│   ├── src/
-│   │   ├── controllers/    # Request handlers
-│   │   ├── models/         # Mongoose schemas (User, Quiz, Result, …)
-│   │   ├── routes/         # API routes
-│   │   └── index.js        # Server entry point
-│   └── package.json
-├── quizApp/                # Frontend static site
-│   ├── assets/             # Images, icons, etc.
-│   ├── index.html
-│   ├── style.css
-│   └── app.js              # Core UI logic
-├── .env                    # Environment variables (JWT secret, DB URI, Cloudinary creds)
-└── README.md
-```
-
----
-
 ## 🌐 API Endpoints
 
 **Base URLs**
@@ -60,27 +38,35 @@ Quizify/
 ### Authentication
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST | `/auth/signup` | Register a new user (email verification sent) |
-| POST | `/auth/login` | Obtain JWT token |
+| POST | `/auth/signup` | Register new user |
+| POST | `/auth/login` | Login user and return JWT |
 | POST | `/auth/verify-otp` | Verify email OTP |
-| POST | `/auth/resend-otp` | Resend verification code |
-| POST | `/auth/forgot-password` | Request password reset |
-| POST | `/auth/reset-password` | Set new password with token |
+| POST | `/auth/resend-otp` | Resend OTP |
 
 ### Quiz Management
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/quizzes` | List all quiz categories |
-| GET | `/quizzes/:categoryId` | Get quizzes for a category |
-| POST | `/quizzes/:quizId/attempt` | Submit answers, receive score |
+| GET | `/quiz/categories` | Get all quiz categories |
+| GET | `/quiz/cards/:subName` | Get quizzes by subcategory |
+| POST | `/quiz/progress` | Save quiz progress (protected) |
+| GET | `/quiz/progress` | Get user progress (protected) |
+
 
 ### User Data
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/users/me` | Profile data (requires JWT) |
-| PUT | `/users/me` | Update name, avatar (multipart) |
-| GET | `/users/me/history` | Quiz attempt history |
-| GET | `/users/me/analytics` | Category‑wise performance |
+| GET | `/users` | Get logged-in user profile |
+| GET | `/users/all` | Get all users (leaderboard) |
+| GET | `/users/:id` | Get specific user profile |
+| PUT | `/users` | Update user profile |
+| DELETE | `/users` | Delete user account |
+
+## 🔐 Auth Protection
+
+Protected routes require JWT token:
+
+```http
+Authorization: <token>
 
 ---
 
