@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizify | Profile</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container profile-page">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-brain"></i>
+                    <span>Quizify</span>
+                </div>
+                <button class="sidebar-toggle" id="toggleSidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <nav class="menu">
+                <a href="./index.html"><i class="fas fa-home"></i> <span>Dashboard</span></a>
+                <a href="./leaderboard.html"><i class="fas fa-trophy"></i> <span>Leaderboard</span></a>
+                <a href="#" class="disabled"><i class="fas fa-lightbulb"></i> <span>Achievements</span></a>
+                <a href="./profile.html" class="active"><i class="fas fa-user-circle"></i> <span>Profile</span></a>
+            </nav>
+            <button class="logoutBtn logout-btn">
+                <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+            </button>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            
+            <!-- Top Banner Card -->
+            <section class="profile-banner">
+                <div class="avatar-hologram">
+                    <div class="holo-crystal">
+                        <div class="holo-face face-1"></div>
+                        <div class="holo-face face-2"></div>
+                        <div class="holo-face face-3"></div>
+                        <div class="holo-face face-4"></div>
+                        <div class="holo-initials" id="profileInitials">AM</div>
+                    </div>
+                </div>
+                <div class="profile-info">
+                    <h1 id="profileName">Ahmed Raza</h1>
+                    <h3 class="profile-subheadline">Quiz Enthusiast</h3>
+                    <p class="profile-date">Joined May 2026</p>
+                </div>
+            </section>
+
+            <!-- Stat Cards Grid -->
+            <section class="stat-cards-grid">
+                <!-- Card 1 -->
+                <div class="stat-card">
+                    <i class="fas fa-gamepad stat-icon"></i>
+                    <p class="stat-label">Quizzes Played</p>
+                    <h2 class="stat-value" id="statPlayed">3</h2>
+                </div>
+                <!-- Card 2 -->
+                <div class="stat-card">
+                    <i class="fas fa-percent stat-icon"></i>
+                    <p class="stat-label">Avg. Score</p>
+                    <h2 class="stat-value" id="statAvg">83%</h2>
+                </div>
+                <!-- Card 3 -->
+                <div class="stat-card">
+                    <i class="fas fa-medal stat-icon"></i>
+                    <p class="stat-label">Best Score</p>
+                    <h2 class="stat-value" id="statBest">90%</h2>
+                </div>
+                <!-- Card 4 -->
+                <div class="stat-card">
+                    <i class="fas fa-eye stat-icon"></i>
+                    <p class="stat-label">Profile Views</p>
+                    <h2 class="stat-value" id="statViews">0</h2>
+                </div>
+            </section>
+
+            <!-- Lower Panels -->
+            <section class="lower-panels-grid">
+                <!-- Left Panel: Category Performance -->
+                <div class="panel category-panel">
+                    <div class="panel-header">
+                        <h2>Category Performance</h2>
+                        <i class="fas fa-chart-pie panel-icon"></i>
+                    </div>
+                    <div class="category-list" id="categoryList">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Right Panel: Achievements -->
+                <div class="panel achievements-panel">
+                    <div class="panel-header">
+                        <h2>Achievements <span class="muted">(Coming Soon)</span></h2>
+                    </div>
+                    <div class="achievements-grid">
+                        <div class="achievement locked">
+                            <i class="fas fa-square-xmark"></i>
+                        </div>
+                        <div class="achievement locked">
+                            <i class="fas fa-fire"></i>
+                            <span class="ach-label">5 Day Streak</span>
+                            <i class="fas fa-lock lock-icon"></i>
+                        </div>
+                        <div class="achievement locked">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-lock lock-icon"></i>
+                        </div>
+                        <div class="achievement locked">
+                            <i class="fas fa-graduation-cap"></i>
+                            <i class="fas fa-lock lock-icon"></i>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+    
+    <script type="module" src="profile.js"></script>
+</body>
+</html>

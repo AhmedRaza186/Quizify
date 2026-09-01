@@ -1,6 +1,5 @@
-const API_URL = window.location.hostname === "localhost"
-  ? "http://localhost:8000/api/auth"
-  : "https://quizify-backend-nine.vercel.app/api/auth";
+import { API_BASE, showToast } from '../utils.js';
+const API_URL = `${API_BASE}/auth`;
 
 
 // DOM elements
@@ -30,33 +29,7 @@ if (storedToken) {
     window.location.href = '../quizApp/index.html';
 }
 
-// Toast Notification System
-function showToast(message, type = 'error') {
-    let container = document.getElementById('toast-container');
-    if (!container) {
-        container = document.createElement('div');
-        container.id = 'toast-container';
-        container.className = 'toast-container';
-        document.body.appendChild(container);
-    }
 
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
-
-    toast.innerHTML = `
-        <i class="fas ${icon}"></i>
-        <span>${message}</span>
-    `;
-
-    container.appendChild(toast);
-
-    setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateY(-20px)';
-        setTimeout(() => toast.remove(), 500);
-    }, 3000);
-}
 
 function throwError(error) {
     if (!errorText) return;
@@ -236,7 +209,7 @@ async function verifyOtp(email) {
     otpInputs.forEach(input => {
         otp.push(input.value)
     });
-    otp = +(otp.join(''))
+    otp = otp.join('')
 
     try {
         const otpVerificationApi = await fetch(`${API_URL}/verify-otp`, {

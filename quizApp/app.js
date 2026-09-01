@@ -1,8 +1,6 @@
 // imports
 import { uploadImg } from "../cloudinary.js";
-const API_BASE = window.location.hostname === "localhost"
-  ? "http://localhost:8000/api"
-  : "https://quizify-backend-nine.vercel.app/api";
+import { API_BASE, showToast } from "../utils.js";
 
 // Utility for API calls
 async function apiCall(endpoint, method = 'GET', body = null) {
@@ -101,7 +99,10 @@ async function init() {
     }
 
     userData = await apiCall('/users');
-    if (!userData) return;
+    if (!userData) {
+        showToast("Failed to load user data.", "error");
+        return;
+    }
 
     updateUI(userData);
     loadCategories();
@@ -262,8 +263,139 @@ function showCards(cards, sub) {
         const isFailed = card.quizCompleted && card.percentage < 40;
         const isMastered = card.quizCompleted && card.percentage >= 40;
         const statusClass = card.quizCompleted ? 'completed' : '';
-        const accentColor = isFailed ? '#ef4444' : (isMastered ? '#10b981' : 'var(--accent)');
-        const badgeLabel = isFailed ? '✕ Failed' : '✓ Mastered';
+        const accentColor = isFailed ? '#ef4444' : (isMastered ? 'var(--cyan)' : 'var(--cyan)');
+        const badgeClass = isMastered ? 'badge-mastered' : (isFailed ? 'badge-failed' : '');
+        const badgeLabelText = isFailed ? '✕ Failed' : '✓ Mastered';
+
+        const iconMappings = [
+            // ==================== HTML ====================
+            { keywords: ['html basics'], icon: 'fab fa-html5' },
+            { keywords: ['forms & inputs'], icon: 'fas fa-file-signature' },
+            { keywords: ['semantic html'], icon: 'fas fa-code' },
+
+            // ==================== CSS ====================
+            { keywords: ['css fundamentals'], icon: 'fab fa-css3-alt' },
+            { keywords: ['flexbox & grid'], icon: 'fas fa-table-cells-large' },
+            { keywords: ['responsive design'], icon: 'fas fa-mobile-screen-button' },
+
+            // ==================== JAVASCRIPT ====================
+            { keywords: ['js basics'], icon: 'fab fa-js' },
+            { keywords: ['arrays & objects'], icon: 'fas fa-layer-group' },
+            { keywords: ['dom manipulation'], icon: 'fas fa-sitemap' },
+            { keywords: ['fetch & modules'], icon: 'fas fa-arrows-rotate' },
+
+            // ==================== REACT ====================
+            { keywords: ['jsx & components'], icon: 'fab fa-react' },
+            { keywords: ['state & props'], icon: 'fas fa-diagram-project' },
+            { keywords: ['hooks'], icon: 'fas fa-anchor' },
+
+            // ==================== NODE.JS ====================
+            { keywords: ['node basics'], icon: 'fab fa-node-js' },
+            { keywords: ['express.js'], icon: 'fas fa-server' },
+            { keywords: ['middleware'], icon: 'fas fa-filter' },
+
+            // ==================== DATABASES ====================
+            { keywords: ['sql basics'], icon: 'fas fa-database' },
+            { keywords: ['nosql introduction'], icon: 'fas fa-file-code' },
+            { keywords: ['joins & queries'], icon: 'fas fa-link' },
+
+            // ==================== APIs ====================
+            { keywords: ['rest api'], icon: 'fas fa-network-wired' },
+            { keywords: ['http methods'], icon: 'fas fa-globe' },
+            { keywords: ['authentication'], icon: 'fas fa-shield-halved' },
+
+            // ==================== DOCKER ====================
+            { keywords: ['docker basics'], icon: 'fab fa-docker' },
+            { keywords: ['containers & images'], icon: 'fas fa-box' },
+            { keywords: ['docker compose'], icon: 'fas fa-layer-group' },
+
+            // ==================== ALGEBRA ====================
+            { keywords: ['linear equations'], icon: 'fas fa-equals' },
+            { keywords: ['quadratic equations'], icon: 'fas fa-chart-line' },
+            { keywords: ['polynomials'], icon: 'fas fa-superscript' },
+
+            // ==================== GEOMETRY ====================
+            { keywords: ['triangles & circles'], icon: 'fas fa-shapes' },
+            { keywords: ['coordinate geometry'], icon: 'fas fa-crosshairs' },
+            { keywords: ['3d shapes'], icon: 'fas fa-cube' },
+
+            // ==================== STATISTICS & PROBABILITY ====================
+            { keywords: ['mean, median, mode'], icon: 'fas fa-chart-column' },
+            { keywords: ['probability basics'], icon: 'fas fa-dice' },
+            { keywords: ['distributions'], icon: 'fas fa-chart-area' },
+
+            // ==================== DEBIT & CREDIT ====================
+            { keywords: ['basic rules'], icon: 'fas fa-scale-balanced' },
+            { keywords: ['journal entries'], icon: 'fas fa-book' },
+            { keywords: ['trial balance'], icon: 'fas fa-scale-unbalanced' },
+
+            // ==================== ASSETS & EXPENSES ====================
+            { keywords: ['asset types'], icon: 'fas fa-boxes-stacked' },
+            { keywords: ['expense classification'], icon: 'fas fa-tags' },
+            { keywords: ['expense recording'], icon: 'fas fa-receipt' },
+
+            // ==================== LIABILITIES, REVENUE & CAPITAL ====================
+            { keywords: ['liabilities basics'], icon: 'fas fa-file-invoice-dollar' },
+            { keywords: ['revenue recognition'], icon: 'fas fa-money-bill-trend-up' },
+            { keywords: ['capital accounts'], icon: 'fas fa-coins' },
+
+            // ==================== FINANCIAL STATEMENTS ====================
+            { keywords: ['income statement'], icon: 'fas fa-file-invoice' },
+            { keywords: ['balance sheet'], icon: 'fas fa-scale-balanced' },
+            { keywords: ['cash flow statement'], icon: 'fas fa-money-bill-transfer' },
+
+            // ==================== ECONOMICS — BASIC CONCEPTS ====================
+            { keywords: ['introduction to economics'], icon: 'fas fa-landmark' },
+            { keywords: ['scarcity & choice'], icon: 'fas fa-scale-balanced' },
+            { keywords: ['opportunity cost'], icon: 'fas fa-code-compare' },
+
+            // ==================== DEMAND & SUPPLY ====================
+            { keywords: ['law of demand'], icon: 'fas fa-arrow-trend-down' },
+            { keywords: ['law of supply'], icon: 'fas fa-arrow-trend-up' },
+            { keywords: ['market equilibrium'], icon: 'fas fa-scale-balanced' },
+
+            // ==================== PRICE ====================
+            { keywords: ['price determination'], icon: 'fas fa-tags' },
+            { keywords: ['price elasticity'], icon: 'fas fa-chart-line' },
+            { keywords: ['price theory'], icon: 'fas fa-money-bill-wave' },
+
+            // ==================== NATIONAL INCOME ====================
+            { keywords: ['gdp basics'], icon: 'fas fa-chart-column' },
+            { keywords: ['gnp & nnp'], icon: 'fas fa-globe' },
+            { keywords: ['income methods'], icon: 'fas fa-money-bill-transfer' },
+
+            // ==================== INTERNATIONAL TRADE ====================
+            { keywords: ['trade theories'], icon: 'fas fa-handshake' },
+            { keywords: ['balance of payments'], icon: 'fas fa-scale-balanced' },
+            { keywords: ['trade policies'], icon: 'fas fa-file-contract' },
+
+            // ==================== GEOGRAPHY ====================
+            { keywords: ['continents & oceans'], icon: 'fas fa-earth-americas' },
+            { keywords: ['countries & capitals'], icon: 'fas fa-city' },
+            { keywords: ['physical geography'], icon: 'fas fa-mountain' },
+
+            // ==================== GENERAL SCIENCE ====================
+            { keywords: ['chemistry basics'], icon: 'fas fa-flask' },
+            { keywords: ['physics basics'], icon: 'fas fa-atom' },
+            { keywords: ['biology basics'], icon: 'fas fa-dna' },
+
+            // ==================== FUN PLAY ====================
+            { keywords: ['flags & countries'], icon: 'fas fa-flag' },
+            { keywords: ['logos & brands'], icon: 'fas fa-copyright' },
+            { keywords: ['symbols & signs'], icon: 'fas fa-icons' }
+        ];
+
+        let holoIcon = 'fas fa-cube'; // sleek default icon
+        let lowerTitle = card.title.toLowerCase();
+        let lowerSub = sub.toLowerCase();
+        let searchStr = lowerTitle + " " + lowerSub;
+
+        for (const mapping of iconMappings) {
+            if (mapping.keywords.some(kw => searchStr.includes(kw))) {
+                holoIcon = mapping.icon;
+                break;
+            }
+        }
 
         const cardEl = document.createElement('div');
         cardEl.className = `quizCard ${statusClass}`;
@@ -271,9 +403,14 @@ function showCards(cards, sub) {
         cardEl.dataset.id = card.order;
 
         cardEl.innerHTML = `
-            <div class="card-image-wrapper">
-                <img src="${card.img}" alt="${card.title}">
-                ${card.quizCompleted ? `<span class="status-badge" style="background: ${accentColor}">${badgeLabel}</span>` : ''}
+            <div class="card-image-wrapper holo-wrapper">
+                <div class="holo-scene">
+                    <div class="holo-icon-container">
+                        <i class="${holoIcon} holo-glow-icon"></i>
+                        <div class="holo-base-ring"></div>
+                    </div>
+                </div>
+                ${card.quizCompleted ? `<span class="status-badge ${badgeClass}">${badgeLabelText}</span>` : ''}
             </div>
             
             <div class="cardBody">

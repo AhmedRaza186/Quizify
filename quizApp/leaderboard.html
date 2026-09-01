@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizify | Global Leaderboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-brain"></i>
+                    <span>Quizify</span>
+                </div>
+                <button class="sidebar-toggle" id="toggleSidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <nav class="menu">
+                <a href="./index.html"><i class="fas fa-home"></i> <span>Home</span></a>
+                <a href="#" class="active"><i class="fas fa-trophy"></i> <span>Leaderboard</span></a>
+                <a href="#" class="disabled"><i class="fas fa-lightbulb"></i> <span>Achievements</span></a>
+                <a href="./profile.html"><i class="fas fa-user-circle"></i> <span>Profile</span></a>
+            </nav>
+            <button class="logoutBtn logout-btn">
+                <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+            </button>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <div class="leaderboard-header">
+                <h1>Global Leaderboard</h1>
+                <p>Global leaderboard compared to the programs, and ranked in focus.</p>
+            </div>
+
+            <!-- Podium Cards (Force Fields) -->
+            <section class="podium-section">
+                <!-- Rank 2 -->
+                <div class="podium-card rank-2" id="rank2Card">
+                    <!-- Populated by JS -->
+                </div>
+
+                <!-- Rank 1 -->
+                <div class="podium-card rank-1" id="rank1Card">
+                    <!-- Populated by JS -->
+                </div>
+
+                <!-- Rank 3 -->
+                <div class="podium-card rank-3" id="rank3Card">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+
+            <!-- User Directory Table -->
+            <section class="directory-section">
+                <div class="directory-header">
+                    <h2>User Directory</h2>
+                    <div class="directory-controls">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Search">
+                        </div>
+                        <select class="filter-dropdown">
+                            <option>Filter</option>
+                        </select>
+                        <select class="filter-dropdown">
+                            <option>Filter frequency</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="directory-table-container">
+                    <table class="directory-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Count</th>
+                                <th>Progress</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboardBody">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <script type="module" src="leaderboard.js"></script>
+</body>
+</html>

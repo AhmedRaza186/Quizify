@@ -27,9 +27,9 @@
             </div>
             <nav class="menu">
                 <a href="#" class="active"><i class="fas fa-home"></i> <span>Home</span></a>
-                <a href="./leaderboard/leaderboard.html"><i class="fas fa-trophy"></i> <span>Leaderboard</span></a>
+                <a href="./leaderboard.html"><i class="fas fa-trophy"></i> <span>Leaderboard</span></a>
                 <a href="#" class="disabled"><i class="fas fa-lightbulb"></i> <span>Achievements</span></a>
-                <a href="./profile/profile.html"><i class="fas fa-user-circle"></i> <span>Profile</span></a>
+                <a href="./profile.html"><i class="fas fa-user-circle"></i> <span>Profile</span></a>
             </nav>
             <button class="logoutBtn logout-btn">
                 <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
@@ -38,30 +38,39 @@
 
         <!-- Main Content Area -->
         <main class="main-content">
-            <header class="header">
-                <div class="greetingSide">
-                    <h3 id="greeting">Welcome back,</h3>
-                    <h1 id="name">User</h1>
-                    <p>Continue your learning journey and climb the ranks!</p>
-                </div>
-                <div class="dpSide">
-                    <div class="circle pic"></div>
-                </div>
-            </header>
+            <!-- Top Header Section (Two Cards) -->
+            <section class="dashboard-top-cards">
+                <!-- Welcome Banner (Left Card) -->
+                <header class="header welcome-card">
+                    <div class="greetingSide">
+                        <h3 id="greeting">Welcome back,</h3>
+                        <h1 id="name">User</h1>
+                        <p class="subtitle">Continue your learning journey and climb the ranks!</p>
+                    </div>
+                    <!-- Custom Abstract 3D Sphere -->
+                    <div class="sphere-container">
+                        <div class="sphere-globe">
+                            <div class="sphere-ring ring1"></div>
+                            <div class="sphere-ring ring2"></div>
+                            <div class="sphere-ring ring3"></div>
+                        </div>
+                    </div>
+                </header>
 
-            <!-- Stats Overview -->
-            <section class="avgScoreSection">
-                <div class="avgScoreCard">
-                    <div class="scoreText">
+                <!-- Global Progress (Right Card) -->
+                <div class="avgScoreCard global-progress-card">
+                    <div class="progress-header">
                         <p>Global Progress</p>
                         <h2 id="overallScore">0%</h2>
                         <span class="basedOn">Based on <strong class="basedOnQuizzes">0</strong> quizzes</span>
                     </div>
+                    <div class="progress-chart">
+                        <!-- Minimalist glowing SVG line chart -->
+                        <svg viewBox="0 0 100 30" class="line-chart-svg" preserveAspectRatio="none">
+                            <path d="M0,25 Q10,5 20,20 T40,15 T60,25 T80,5 T100,20" fill="none" stroke="var(--cyan)" stroke-width="2" class="chart-line" />
+                        </svg>
+                    </div>
                     <div class="progressWrapper">
-                        <div class="percentages">
-                            <span>Your Performance</span>
-                            <span>Avg. Score</span>
-                        </div>
                         <div class="progressBar">
                             <div class="progressFill" style="width: 0%"></div>
                         </div>

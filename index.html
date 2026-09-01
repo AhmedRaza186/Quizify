@@ -55,31 +55,61 @@
     <main>
         <section class="hero">
             <div class="hero-content">
-                <div class="announcement">✨ Join 2,000+ active learners</div>
-                <h1>Level Up Your Knowledge with <span>Quizify</span></h1>
-                <p>The ultimate platform for interactive learning. Challenge yourself with expertly curated quizzes, track your progress, and master new subjects every day.</p>
+                <div class="pill-badge">✨ Join 2,000+ active learners</div>
+                <h1>Level Up Your Knowledge with <br><span>Quizify</span></h1>
+                <p class="subheadline">The ultimate platform for interactive learning. Challenge yourself with expertly curated quizzes, track your progress, and master new subjects every day.</p>
                 <div class="cta-group">
-                    <a href="./auth/signup.html" class="btn btn-primary">Start Your Journey <i class="fas fa-arrow-right"></i></a>
+                    <a href="./auth/signup.html" class="btn btn-primary">Start Your Journey</a>
                     <a href="#features" class="btn btn-secondary">Explore Features</a>
                 </div>
             </div>
             
             <div class="hero-visual">
                 <div class="dashboard-mock">
-                    <div class="mock-header"></div>
-                    <div class="mock-body">
-                        <div class="mock-card"></div>
-                        <div class="mock-card"></div>
-                        <div class="mock-card"></div>
+                    <div class="mock-sidebar">
+                        <div class="mock-logo">Q</div>
+                        <div class="mock-nav-item active"></div>
+                        <div class="mock-nav-item"></div>
+                        <div class="mock-nav-item"></div>
+                    </div>
+                    <div class="mock-main">
+                        <div class="mock-header"></div>
+                        <div class="mock-widgets">
+                            <div class="widget chart-widget">
+                                <svg viewBox="0 0 100 40" class="mock-line-chart">
+                                    <path d="M0,35 Q15,30 25,20 T50,25 T75,10 T100,15" fill="none" stroke="var(--cyan)" stroke-width="1.5" stroke-linecap="round" />
+                                    <path d="M0,35 Q15,30 25,20 T50,25 T75,10 T100,15 L100,40 L0,40 Z" fill="url(#chartGrad)" stroke="none" />
+                                    <defs>
+                                        <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="0%" stop-color="var(--cyan)" stop-opacity="0.3" />
+                                            <stop offset="100%" stop-color="var(--cyan)" stop-opacity="0" />
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
+                            </div>
+                            <div class="widget bar-widget">
+                                <div class="bar" style="height: 40%"></div>
+                                <div class="bar" style="height: 70%"></div>
+                                <div class="bar" style="height: 50%"></div>
+                                <div class="bar" style="height: 90%"></div>
+                                <div class="bar" style="height: 60%"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
         <section class="stats">
-            <div class="stat-item"><span>50+</span><p>Categories</p></div>
-            <div class="stat-item"><span>10k+</span><p>Questions</p></div>
-            <div class="stat-item"><span>98%</span><p>Satisfaction</p></div>
+            <div class="stat-wrapper">
+                <div class="stat-item hexagon"><span>50+</span><p>Categories</p></div>
+            </div>
+            <div class="stat-wrapper">
+                <div class="stat-item hexagon"><span>10k+</span><p>Questions</p></div>
+            </div>
+            <div class="stat-wrapper">
+                <div class="stat-item hexagon"><span>98%</span><p>Satisfaction</p></div>
+            </div>
         </section>
 
         <section id="features" class="features">
